@@ -1,0 +1,187 @@
+<!-- A webpage to show particle count data -->
+<!-- Author: Emroj & Harsh-->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Corona :)</title>
+    <style type="text/css">
+      body{
+        margin:0px;
+        padding:0px;
+        margin-left:auto;
+        margin-right:auto;
+      }
+      .container{
+        width:100%;
+        max-width:800px;
+        margin-left:auto;
+        margin-right:auto;
+      }
+      .chart-container{
+        border: 1px solid #dfe1e5;
+        border-radius: 8px;
+        box-shadow: none;
+        margin-top:20px;
+        padding:20px;
+      }
+      .startContainer{
+        position:absolute;
+        height:100%;
+        width:100%;
+        background-color:rgba(0,0,0,0.5);
+        display:flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .startCircle{
+        height:150px;
+        width:150px;
+        border-radius:50%;
+        background-color:#4CAF50;
+        text-align:center;
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        color:rgba(255,255,255,0.8);
+        font-size:1.5rem;
+      }
+      .startCircle:hover{
+        background-color:#4CBF50;
+        color:rgba(255,255,255,1);
+        cursor:pointer;
+      }
+      .d-none{
+        display:none;
+      }
+      .myChart{
+        width:100%;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script type="text/javascript">
+      window.onload=init;
+      var initialTime = new Date();
+      initialData={
+        time:initialTime.getTime()
+      }
+      dataHub=[];
+      indiData={
+        NP_0point3: [],
+        NP_0point5: [],
+        NP_1point0: [],
+        NP_2point5: [],
+        NP_5point0: [],
+        NP_10: [],
+        PM1point0_ATM: [],
+        PM1point0_CF: [],
+        PM2point0_CF: [],
+        PM2point5_ATM: [],
+        PM10_ATM: [],
+        PM10_CF: [],
+        Time_passed: [],
+        my_time:[]
+      }
+      index=0
+
+      function getClass(className){
+         return document.getElementsByClassName(className)[0]
+      }
+      function init(){
+        getClass('startCircle').addEventListener('click', startProcess, false);
+      }
+      function startProcess(){
+        getClass('startContainer').classList.toggle('d-none');
+        getClass('container').classList.toggle('d-none');
+        plot(indiData.my_time, indiData.NP_0point3, 'My Plot')
+        window.setInterval(function(){
+          getData()
+        }, 5000)
+
+      }
+      async function getData(){
+        var latestdata= await axios.get('http://192.168.0.185');
+        console.log(latestdata.data)
+        addData(latestdata.data)
+        return latestdata.data;
+      }
+
+      function addData(latestData){
+
+        dataHub.push(latestData);
+        indiData.NP_0point3.push(latestData['NP_0.3']),
+        indiData.NP_0point5.push(latestData['NP_0.5']),
+        indiData.NP_1point0.push(latestData['NP_1.0']),
+        indiData.NP_2point5.push(latestData['NP_2.5']),
+        indiData.NP_5point0.push(latestData['NP_5.0']),
+        indiData.NP_10.push(latestData['NP_10']),
+        indiData.PM1point0_ATM.push(latestData['PM1.0_ATM']),
+        indiData.PM1point0_CF.push(latestData['PM1.0_CF']),
+        indiData.PM2point0_CF.push(latestData['PM2.0_CF']),
+        indiData.PM2point5_ATM.push(latestData['PM2.5_ATM']),
+        indiData.PM10_ATM.push(latestData['PM10_ATM']),
+        indiData.PM10_CF.push(latestData['PM10_CF']),
+        indiData.Time_passed.push(latestData['Time_passed'])
+        var d = new Date();
+        var n = d.getTime();
+
+        var timeinSec=Math.round((n-initialData.time)/1000)
+        console.log(timeinSec);
+        indiData.my_time.push(timeinSec)
+        addDataToPlot(chart, timeinSec, latestData['NP_0.3'])
+      }
+
+
+      function plot(labels, dataPoint, label){
+        console.log('Hello');
+        var ctx = document.getElementById('myChart').getContext('2d');
+         chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: label,
+              backgroundColor: 'rgba(255, 255, 255, 0)',
+              borderColor: 'rgb(100, 99, 255)',
+              data: dataPoint
+            },
+            {
+              label: label,
+              backgroundColor: 'rgba(255, 0, 0, 1)',
+              borderColor: 'rgb(100, 99, 255)',
+              data: dataPoint
+            }
+          ]
+          },
+          // Configuration options go here
+            options: {}
+          });
+      }
+
+      function addDataToPlot(chart, label, data) {
+        //chart.data.labels.push(label);
+        //chart.data.datasets[0].data.push(data);
+        chart.update();
+      }
+
+
+    </script>
+  </head>
+  <body>
+    <div class="wr">
+      <div class="container d-none">
+        <div class="chart-container" style="position: relative; width:100%;">
+          <canvas id="myChart"></canvas>
+        </div>
+      </div>
+      <div class="startContainer">
+        <div class="startCircle">
+          <div class="startBtn">
+            Start
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
