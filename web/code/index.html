@@ -1,5 +1,4 @@
 <!-- A webpage to show particle count data -->
-<!-- Author: Emroj & Harsh-->
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -37,7 +36,10 @@
       .startCircle{
         height:150px;
         width:150px;
+        border-style: solid;
         border-radius:50%;
+        border-width: 10px;
+        border-color: rgba(255, 255, 255, 0.8);
         background-color:#4CAF50;
         text-align:center;
         display:flex;
@@ -56,6 +58,20 @@
       }
       .myChart{
         width:100%;
+      }
+
+      .downloadBtn{
+        margin: 20px 0;
+        padding: 10px 20px;
+        width:200px;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3em;
+        border-radius: 5px;
+      }
+      .downloadBtn:hover{
+        cursor: pointer;
+        background-color: rgba(0, 0, 0, 0.6);
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" charset="utf-8"></script>
@@ -83,7 +99,7 @@
       // Static variable definition
       var staticData={
         ip:'192.168.0.185',
-        refreshRate: 20000
+        refreshRate: 10000
       }
       window.onload=init;
       var initialTime = new Date();
@@ -113,6 +129,7 @@
       function init(){
         getClass('startCircle').addEventListener('click', startProcess, false);
         getClass('i-particle-dimension').addEventListener('change', changeGraph, false);
+        getClass('downloadBtn').addEventListener('click', downloadData, false);
       }
       function startProcess(){
         getClass('startContainer').classList.toggle('d-none');
@@ -196,7 +213,10 @@
         chart.update();
       }
 
-
+      function downloadData(){
+        var currentParticleDimension=getClass('i-particle-dimension').value;
+        downloadFile(indiData[currentParticleDimension], 'a.txt')
+      }
 
 
     </script>
@@ -213,11 +233,54 @@
             <select class="i-particle-dimension" name="i-particle-dimension">
               <option value="NP_0point3">NP_0point3</option>
               <option value="NP_0point5">NP_0point5</option>
+              <option value="NP_1point0">NP_1point0</option>
+              <option value="NP_2point5">NP_2point5</option>
+              <option value="NP_5point0">NP_5point0</option>
+              <option value="NP_10">NP_10</option>
+              <option value="PM1point0_ATM">PM1point0_ATM</option>
+              <option value="PM1point0_CF">PM1point0_CF</option>
+              <option value="PM2point0_CF">PM2point0_CF</option>
+              <option value="PM2point5_ATM">PM2point5_ATM</option>
+              <option value="PM10_ATM">PM10_ATM</option>
+              <option value="PM10_CF">PM10_CF</option>
             </select>
+          </div>
+
+          <div class="setting">
+            <div class="setting-text">
+              Setting
+            </div>
+            <div class="setting-options">
+              <div class="setting-item">
+                IP: <input class="i-ip" type="text" name="i-ip" value="192.168.0.185">
+              </div>
+              <div class="setting-item">
+                RefreshRate (ms): <input class="i-refreshRate" type="text" name="i-refreshRate" value="10000">
+              </div>
+              <div class="setting-item">
+                Graph colour: <input class="i-graphColour" type="text" name="i-graphColour" value="rgb(100, 99, 255)">
+              </div>
+              <div class="setting-item">
+                Graph background colour: <input class="i-graphBgColour" type="text" name="i-graphBgColour" value="rgba(255, 255, 255, 0)">
+              </div>
+            </div>
+            <div class="filters">
+              <div class="filter-text">
+                Add filters
+              </div>
+              <div class="filter-items">
+                Filter items
+              </div>
+            </div>
           </div>
         </div>
         <div class="chart-container" style="position: relative; width:100%;">
           <canvas id="myChart"></canvas>
+        </div>
+        <div class="downloadData">
+          <div class="downloadBtn">
+            Download data
+          </div>
         </div>
       </div>
       <div class="startContainer">

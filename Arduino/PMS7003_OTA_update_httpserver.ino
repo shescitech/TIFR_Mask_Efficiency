@@ -9,8 +9,8 @@ const char* host = "esp8266-webupdate";
 //const char* update_username = "admin";
 //const char* update_password = "admin";
 // Replace with your network credentials
-const char* ssid = "BB30";
-const char* password = "bb302445";
+const char* ssid = "Your WiFi SSID";
+const char* password = "Your WiFi password";
 //how many clients should be able to telnet to this ESP8266
 #define MAX_SRV_CLIENTS 3
 ESP8266WebServer webserver(80);   //instantiate server at port 80 (http port)
