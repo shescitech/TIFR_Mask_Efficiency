@@ -112,6 +112,7 @@
 
       function init(){
         getClass('startCircle').addEventListener('click', startProcess, false);
+        getClass('i-particle-dimension').addEventListener('change', changeGraph, false);
       }
       function startProcess(){
         getClass('startContainer').classList.toggle('d-none');
@@ -188,9 +189,10 @@
         chart.update();
       }
 
-      function modifyGraph() {
+      function changeGraph() {
+        var currentParticleDimension=getClass('i-particle-dimension').value;
         chart.data.labels=indiData.my_time;
-        chart.data.datasets[0].data=indiData.NP_5point0;
+        chart.data.datasets[0].data=indiData[currentParticleDimension];
         chart.update();
       }
 
@@ -202,8 +204,17 @@
   <body>
     <div class="wr">
       <div class="container d-none">
-        <div class="configuration">
-          Configuration
+        <div class="viewOptions">
+          <div class="configuration-text">
+            Configuration
+          </div>
+          <div class="particle">
+            Particle dimension:
+            <select class="i-particle-dimension" name="i-particle-dimension">
+              <option value="NP_0point3">NP_0point3</option>
+              <option value="NP_0point5">NP_0point5</option>
+            </select>
+          </div>
         </div>
         <div class="chart-container" style="position: relative; width:100%;">
           <canvas id="myChart"></canvas>
