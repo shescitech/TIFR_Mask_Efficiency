@@ -61,9 +61,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" charset="utf-8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script type="text/javascript">
+      //Supporting functions
+      function getClass(className){
+         return document.getElementsByClassName(className)[0]
+      }
+
+      function downloadFile(data, fileName, type="text/plain") {
+        const a = document.createElement("a");
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.href = window.URL.createObjectURL(
+          new Blob([data], { type })
+        );
+        a.setAttribute("download", fileName);
+        a.click();
+        window.URL.revokeObjectURL(a.href);
+        document.body.removeChild(a);
+      }
+    </script>
+    <script type="text/javascript">
+      // Static variable definition
       var staticData={
         ip:'192.168.0.185',
-        refreshRate: 20
+        refreshRate: 20000
       }
       window.onload=init;
       var initialTime = new Date();
@@ -89,9 +109,7 @@
       }
       index=0
 
-      function getClass(className){
-         return document.getElementsByClassName(className)[0]
-      }
+
       function init(){
         getClass('startCircle').addEventListener('click', startProcess, false);
       }
@@ -99,13 +117,14 @@
         getClass('startContainer').classList.toggle('d-none');
         getClass('container').classList.toggle('d-none');
         plot(indiData.my_time, indiData.NP_0point3, 'My Plot')
+        getData();
         window.setInterval(function(){
           getData()
-        }, 5000)
+        }, staticData.refreshRate)
 
       }
       async function getData(){
-        var latestdata= await axios.get('http://192.168.0.185');
+        var latestdata= await axios.get('http://'+staticData.ip);
         console.log(latestdata.data)
         addData(latestdata.data)
         return latestdata.data;
@@ -150,12 +169,12 @@
               borderColor: 'rgb(100, 99, 255)',
               data: dataPoint
             },
-            {
-              label: label,
-              backgroundColor: 'rgba(255, 0, 0, 1)',
-              borderColor: 'rgb(100, 99, 255)',
-              data: dataPoint
-            }
+            // {
+            //   label: label,
+            //   backgroundColor: 'rgba(255, 0, 0, 1)',
+            //   borderColor: 'rgb(100, 99, 255)',
+            //   data: dataPoint
+            // }
           ]
           },
           // Configuration options go here
@@ -169,12 +188,23 @@
         chart.update();
       }
 
+      function modifyGraph() {
+        chart.data.labels=indiData.my_time;
+        chart.data.datasets[0].data=indiData.NP_5point0;
+        chart.update();
+      }
+
+
+
 
     </script>
   </head>
   <body>
     <div class="wr">
       <div class="container d-none">
+        <div class="configuration">
+          Configuration
+        </div>
         <div class="chart-container" style="position: relative; width:100%;">
           <canvas id="myChart"></canvas>
         </div>
