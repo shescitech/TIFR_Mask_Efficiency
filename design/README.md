@@ -6,7 +6,7 @@ This sensor has been traditionally used for measuring Air Quality Index.
 Different kinds of masks are available for protection against coronavirus, as shown in the image below:
 
 ![alt Mask](https://github.com/shescitech/TIFR_Mask_Efficiency/blob/master/design/Masks.png)
-
+![alt Mask](https://github.com/shescitech/TIFR_Mask_Efficiency/blob/master/design/N95Mask.png)
 Some people use a simple handkerchief or cloth to cover the face as well.
 
 All of these have varying efficiencies of protection against the viruses. 
