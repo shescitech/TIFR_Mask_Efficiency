@@ -3,6 +3,9 @@
 Here we present an easy to make Mask efficiency testing device using a Plantower 7003 sensor.
 This sensor has been traditionally used for measuring Air Quality Index.
 
+Different kinds of masks are available for protection against coronavirus, as shown in the image below:
+
+![alt Mask Image ](/Masks.png)
 
 The project consists of all code design and documentation to design face mask efficiency tester
 
