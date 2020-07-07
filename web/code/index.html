@@ -76,6 +76,7 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" charset="utf-8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.min.js"></script>
     <script type="text/javascript">
       //Supporting functions
       function getClass(className){
@@ -130,6 +131,7 @@
         getClass('startCircle').addEventListener('click', startProcess, false);
         getClass('i-particle-dimension').addEventListener('change', changeGraph, false);
         getClass('downloadBtn').addEventListener('click', downloadData, false);
+        getClass('downloadAllBtn').addEventListener('click', downloadAllData, false);
       }
       function startProcess(){
         getClass('startContainer').classList.toggle('d-none');
@@ -196,7 +198,7 @@
           ]
           },
           // Configuration options go here
-            options: {}
+            options: {tooltips: {mode: 'x'}}
           });
       }
 
@@ -215,7 +217,35 @@
 
       function downloadData(){
         var currentParticleDimension=getClass('i-particle-dimension').value;
-        downloadFile(indiData[currentParticleDimension], 'a.txt')
+        var totalData=''
+        for (var i = 0; i < indiData['NP_0point3'].length; i++) {
+          totalData=totalData+indiData[currentParticleDimension][i]
+          totalData=totalData+ ', '+indiData['my_time'][i]
+          totalData=totalData+ '\n';
+        }
+        downloadFile(totalData, 'a.txt')
+      }
+
+      function downloadAllData(){
+        var totalData=''
+        for (var i = 0; i < indiData['NP_0point3'].length; i++) {
+          totalData=totalData+indiData['NP_0point3'][i]
+          totalData=totalData+ ', '+indiData['NP_0point5'][i]
+          totalData=totalData+ ', '+indiData['NP_1point0'][i]
+          totalData=totalData+ ', '+indiData['NP_2point5'][i]
+          totalData=totalData+ ', '+indiData['NP_5point0'][i]
+          totalData=totalData+ ', '+indiData['NP_10'][i]
+          totalData=totalData+ ', '+indiData['PM1point0_ATM'][i]
+          totalData=totalData+ ', '+indiData['PM1point0_CF'][i]
+          totalData=totalData+ ', '+indiData['PM2point0_CF'][i]
+          totalData=totalData+ ', '+indiData['PM2point5_ATM'][i]
+          totalData=totalData+ ', '+indiData['PM10_ATM'][i]
+          totalData=totalData+ ', '+indiData['PM10_CF'][i]
+          totalData=totalData+ ', '+indiData['Time_passed'][i]
+          totalData=totalData+ ', '+indiData['my_time'][i]
+          totalData=totalData+ '\n';
+        }
+        downloadFile(totalData, 'a.txt')
       }
 
 
@@ -279,7 +309,10 @@
         </div>
         <div class="downloadData">
           <div class="downloadBtn">
-            Download data
+            Download Current data
+          </div>
+          <div class="downloadAllBtn downloadBtn">
+            Download All data
           </div>
         </div>
       </div>
