@@ -1,6 +1,6 @@
 # Open source design for mask efficiency testing
 
-The project consists of all code design and documentation to design face mask efficiency tester
+The project consists of all code design and documentation to design face mask efficiency tester and enhancer.
 
 ## Publication
 Have a look at our publication to get more insight of our work
