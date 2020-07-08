@@ -144,7 +144,7 @@
 
       }
       async function getData(){
-        var latestdata= await axios.get('http://'+staticData.ip);
+        var latestdata= await axios.get('https://'+staticData.ip);
         console.log(latestdata.data)
         addData(latestdata.data)
         return latestdata.data;
