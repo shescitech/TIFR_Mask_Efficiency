@@ -20,9 +20,9 @@ Have a look at our pre-print to get more insight of our work
 
 
 ## Design of the Mask Tester
-![alt Mask](https://github.com/shescitech/TIFR_Mask_Efficiency/blob/master/design/MaskTesterClosed.jpg?raw=true)
+![alt Mask](https://raw.githubusercontent.com/shescitech/TIFR_Mask_Efficiency/master/design/MaskTesterOpen.jpg)
 
-![alt Mask](https://github.com/shescitech/TIFR_Mask_Efficiency/blob/master/design/MaskTeseterOpen.jpg?raw=true)
+![alt Mask](https://raw.githubusercontent.com/shescitech/TIFR_Mask_Efficiency/master/design/MaskTesterClosed.jpg)
 
 
 ## About us
