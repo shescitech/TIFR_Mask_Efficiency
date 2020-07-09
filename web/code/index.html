@@ -4,6 +4,7 @@
   <head>
     <meta charset="utf-8">
     <title>Corona :)</title>
+    <link rel="stylesheet" href="css/multirange.css">
     <style type="text/css">
       body{
         margin:0px;
@@ -77,6 +78,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" charset="utf-8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.min.js"></script>
+    <script src="js/multirange.js"></script>
     <script type="text/javascript">
       //Supporting functions
       function getClass(className){
@@ -198,7 +200,7 @@
           ]
           },
           // Configuration options go here
-            options: {tooltips: {mode: 'x'}}
+            options: {}
           });
       }
 
@@ -217,19 +219,20 @@
 
       function downloadData(){
         var currentParticleDimension=getClass('i-particle-dimension').value;
-        var totalData=''
+        var totalData='Time, '+currentParticleDimension+'\n'
         for (var i = 0; i < indiData['NP_0point3'].length; i++) {
           totalData=totalData+indiData[currentParticleDimension][i]
           totalData=totalData+ ', '+indiData['my_time'][i]
           totalData=totalData+ '\n';
         }
-        downloadFile(totalData, 'a.txt')
+        downloadFile(totalData, 'niskars.csv')
       }
 
       function downloadAllData(){
-        var totalData=''
+        var totalData='my_time, NP_0point3, NP_0point5, NP_1point0, NP_2point5, NP_5point0, NP_10, PM1point0_ATM, PM1point0_CF, PM2point0_CF, PM2point5_ATM, PM10_ATM, PM10_CF, Time_passed \n';
         for (var i = 0; i < indiData['NP_0point3'].length; i++) {
-          totalData=totalData+indiData['NP_0point3'][i]
+          totalData=totalData+indiData['my_time'][i]
+          totalData=totalData + ', ' +indiData['NP_0point3'][i]
           totalData=totalData+ ', '+indiData['NP_0point5'][i]
           totalData=totalData+ ', '+indiData['NP_1point0'][i]
           totalData=totalData+ ', '+indiData['NP_2point5'][i]
@@ -242,10 +245,9 @@
           totalData=totalData+ ', '+indiData['PM10_ATM'][i]
           totalData=totalData+ ', '+indiData['PM10_CF'][i]
           totalData=totalData+ ', '+indiData['Time_passed'][i]
-          totalData=totalData+ ', '+indiData['my_time'][i]
           totalData=totalData+ '\n';
         }
-        downloadFile(totalData, 'a.txt')
+        downloadFile(totalData, 'skimasasa.csv')
       }
 
 
@@ -299,7 +301,9 @@
                 Add filters
               </div>
               <div class="filter-items">
-                Filter items
+                <div class="efficiency-measure">
+                  <input type="range" class name="vol" min="0" max="50">
+                </div>
               </div>
             </div>
           </div>
