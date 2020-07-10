@@ -3,8 +3,9 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Corona :)</title>
-    <link rel="stylesheet" href="css/multirange.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Mask Filtration Efficiency Tester</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style type="text/css">
       body{
         margin:0px;
@@ -12,11 +13,53 @@
         margin-left:auto;
         margin-right:auto;
       }
+      .header{
+        width: 100%;
+        background-color: rgba(0,0,0,0.8);
+        color: white;
+        text-align: center;
+        font-size: 1.8em;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
       .container{
         width:100%;
         max-width:800px;
         margin-left:auto;
         margin-right:auto;
+      }
+      .container-inside{
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .i-particle-dimension{
+        width:300px;
+        padding: 5px; 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        background-color: rgba(50, 100, 0, 0.1);
+        border-radius: 2px;
+      }
+      .particle{
+        display: inline-flex;
+        flex-wrap: wrap;
+      }
+      .particle-text{
+        font-size: 1.1rem;
+      }
+      .advanced-setting-icon{
+        width: 24px;
+        margin-right: 10px;
+      }
+      .data-running-icon{
+          width: 24px;
+          margin-right: 10px;
+      }
+      .data-running-icon:hover{
+        cursor: pointer;
+      }
+      .advanced-setting-icon:hover{
+        cursor: pointer;
       }
       .chart-container{
         border: 1px solid #dfe1e5;
@@ -24,6 +67,7 @@
         box-shadow: none;
         margin-top:20px;
         padding:20px;
+        width: 93%;
       }
       .startContainer{
         position:absolute;
@@ -57,12 +101,76 @@
       .d-none{
         display:none;
       }
+      .setting-components{
+      }
+      .cal-seperation{
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+      .heading-text{
+        font-size: 1.3rem;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .headtwo{
+        font-size: 1.2rem;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .filter-text{
+
+      }
+      .filter-components{
+        display: inline-block;
+      }
+      .filter-item{
+        display: flex;
+      }
+      .filter-name{
+        border-style: solid;
+        padding: 5px 10px;
+        border-width: thin;
+        font-size: 1.1rem;
+        border-radius: 2px;
+        margin-right: 20px;
+      }
+      .filter-name:hover{
+        background-color: rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+      }
+      .filter-selected{
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .filer-result-container{
+        display: flex;
+        flex-wrap: nowrap;
+      }
+      .filer-name-text{
+        margin-right: 10px;
+      }
+
+      .efficiency-value-wr{
+        margin-top: 10px;
+        margin-bottom: 10px;
+        width: 150px;
+        text-align: center;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        text-align: center;
+        border-radius: 20px;
+        background-color: green;
+        font-size: 1.8rem;
+        color: white;
+      }
       .myChart{
         width:100%;
       }
-
+      .downloadData{
+        display: flex;
+        flex-wrap: wrap;
+      }
       .downloadBtn{
-        margin: 20px 0;
+        margin: 20px 20px 20px 0px;
         padding: 10px 20px;
         width:200px;
         text-align: center;
@@ -74,11 +182,15 @@
         cursor: pointer;
         background-color: rgba(0, 0, 0, 0.6);
       }
+
+
+
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" charset="utf-8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.min.js"></script>
-    <script src="js/multirange.js"></script>
+    <script src="js/chartjs-plugin-annotation.min.js"></script>
+    <script src="js/chartjs-plugin-draggable.min.js"></script>
     <script type="text/javascript">
       //Supporting functions
       function getClass(className){
@@ -111,6 +223,7 @@
       }
       dataHub=[];
       indiData={
+        index:[],
         NP_0point3: [],
         NP_0point5: [],
         NP_1point0: [],
@@ -134,17 +247,26 @@
         getClass('i-particle-dimension').addEventListener('change', changeGraph, false);
         getClass('downloadBtn').addEventListener('click', downloadData, false);
         getClass('downloadAllBtn').addEventListener('click', downloadAllData, false);
+        getClass('efficiency-name').addEventListener('click', toggleEfficiency, false);
+        getClass('advanced-setting-icon').addEventListener('click', toggleAdvancedSetting, false);
+        getClass('data-running-icon').addEventListener('click', toggleDataRequest, false);
       }
       function startProcess(){
         getClass('startContainer').classList.toggle('d-none');
         getClass('container').classList.toggle('d-none');
-        plot(indiData.my_time, indiData.NP_0point3, 'My Plot')
+        plot(indiData.my_time, indiData.NP_0point3, '0.3 um')
         getData();
-        window.setInterval(function(){
+        dataRequestHandler=window.setInterval(function(){
           getData()
         }, staticData.refreshRate)
 
       }
+
+      function toggleAdvancedSetting(){
+        getClass('setting').classList.toggle('d-none')
+      }
+
+
       async function getData(){
         var latestdata= await axios.get('http://'+staticData.ip);
         console.log(latestdata.data)
@@ -153,8 +275,8 @@
       }
 
       function addData(latestData){
-
         dataHub.push(latestData);
+        indiData.index.push(indiData.index.length+1)
         indiData.NP_0point3.push(latestData['NP_0.3']),
         indiData.NP_0point5.push(latestData['NP_0.5']),
         indiData.NP_1point0.push(latestData['NP_1.0']),
@@ -176,6 +298,7 @@
         indiData.my_time.push(timeinSec)
         addDataToPlot(chart, timeinSec, latestData['NP_0.3'])
       }
+
 
 
       function plot(labels, dataPoint, label){
@@ -200,8 +323,14 @@
           ]
           },
           // Configuration options go here
-            options: {}
-          });
+          options: {
+            annotation: {
+              annotations: [],
+              drawTime: "afterDraw" // (default)
+            },
+
+          }
+        });
       }
 
       function addDataToPlot(chart, label, data) {
@@ -212,10 +341,97 @@
 
       function changeGraph() {
         var currentParticleDimension=getClass('i-particle-dimension').value;
+        var currentParticleDimensionText=this.options[this.selectedIndex].text;
         chart.data.labels=indiData.my_time;
+        chart.data.datasets[0].label=currentParticleDimensionText;
         chart.data.datasets[0].data=indiData[currentParticleDimension];
         chart.update();
       }
+
+      function toggleEfficiency(e){
+        var datasetLength=indiData['NP_0point3'].length;
+        if(datasetLength>=10){
+          addEfficiencyRange();
+          this.classList.toggle('filter-selected');
+          getClass('efficiency-result').classList.toggle('d-none')
+        }else{
+          alert('Please wait till I gather enough data');
+        }
+
+      }
+
+      function addEfficiencyRange(){
+        var datasetLength=indiData['NP_0point3'].length;
+        var seperation=Math.round(datasetLength/5)
+        if(datasetLength<10){
+          alert('Not enough data. Please collec some more data before finding the efficiency');
+        }else{
+          addAnotate({value:indiData['my_time'][seperation], id:'efficiencyNoMaskStart', labelContent:'No mask Start', indexValue:seperation, color:'rgba(255,0,0,0.5)', fun:efficiencyDrag})
+          addAnotate({value:indiData['my_time'][2*seperation], id:'efficiencyNoMaskStop', labelContent:'No mask end', indexValue:2*seperation, color:'rgba(255,0,0,0.5)', fun:efficiencyDrag})
+          addAnotate({value:indiData['my_time'][3*seperation], id:'efficiencyMaskStart', labelContent:'Mask Start', indexValue:3*seperation, color:'rgba(0,255,0,0.5)', fun:efficiencyDrag})
+          addAnotate({value:indiData['my_time'][4*seperation], id:'efficiencyMaskStop', labelContent:'Mask end', indexValue:4*seperation, color:'rgba(0,255,0,0.5)', fun:efficiencyDrag})
+        }
+        calculateEfficiency();
+      }
+
+      function removeEfficiencyRange(){
+        getAnotationById(chart, 'efficiencyNoMaskStart')=''
+      }
+
+      function calculateEfficiency(){
+        var currentDimension=getClass('i-particle-dimension').value
+        var withoutMask=average(indiData[currentDimension].slice(getClass('iefficiencyNoMaskStart').value,getClass('iefficiencyNoMaskStop').value))
+        var withMask=average(indiData[currentDimension].slice(getClass('iefficiencyMaskStart').value,getClass('iefficiencyMaskStop').value));
+        var efficiencyValue=Math.round((1-withMask/withoutMask)*100)
+        getClass('efficiency-value').innerHTML=efficiencyValue+'%';
+        getClass('efficiency-value-wr').style.backgroundColor=`rgba(${(100-efficiencyValue)/100*255}, ${(efficiencyValue)/100*255}, 0, 0.9)`;
+      }
+
+      function getAnotationById(chart, id){
+        var anotations=chart.options.annotation.annotations
+        for(var i=0; i<anotations.length; i++){
+          if(chart.options.annotation.annotations[i].id==id){
+            return chart.options.annotation.annotations[i];
+          }
+        }
+        return false;
+      }
+
+      function addAnotate({value, id, labelContent, indexValue,color, fun}){
+        getClass('i'+id).value=indexValue
+        var adata={
+            type: 'line',
+            id:id,
+            mode: 'vertical',
+            scaleID: 'x-axis-0',
+            value: value,
+            borderColor: color,
+            borderWidth: 10,
+            label: {
+               enabled: true,
+               position: "center",
+               content: labelContent
+            },
+            onMouseout: function(e) {
+              alert('hello hi');
+            },
+            draggable: true,
+            onDrag: fun
+        }
+        chart.options.annotation.annotations.push(adata)
+        chart.update()
+      }
+
+      function efficiencyDrag(event) {
+          this.value=indiData['my_time'][event.subject.config.value];
+          getClass('i'+this.id).value=indiData['my_time'].indexOf(event.subject.config.value);
+          console.log(event.subject);
+          console.log(this);
+          chart.update()
+          calculateEfficiency();
+      }
+
+      const average = arr => arr.reduce( ( p, c ) => parseFloat(p) + parseFloat(c), 0 ) / arr.length;
 
       function downloadData(){
         var currentParticleDimension=getClass('i-particle-dimension').value;
@@ -250,81 +466,156 @@
         downloadFile(totalData, 'skimasasa.csv')
       }
 
+      function stopData(){
+        clearInterval(dataRequestHandler);
+      }
+      function restartData(){
+        dataRequestHandler=window.setInterval(function(){
+          getData()
+        }, staticData.refreshRate)
+      }
+
+      function toggleDataRequest(){
+        var datastatus=getClass('data-running-icon').getAttribute('data-status');
+        getClass('data-status-icon').classList.toggle('fa-spin');
+        if(datastatus=='on'){
+          stopData()
+          getClass('data-running-icon').setAttribute('data-status', 'off')
+        }else if(datastatus=='off'){
+          restartData();
+          getClass('data-running-icon').setAttribute('data-status', 'on')
+        }
+      }
 
     </script>
   </head>
   <body>
     <div class="wr">
-      <div class="container d-none">
-        <div class="viewOptions">
-          <div class="configuration-text">
-            Configuration
-          </div>
-          <div class="particle">
-            Particle dimension:
-            <select class="i-particle-dimension" name="i-particle-dimension">
-              <option value="NP_0point3">NP_0point3</option>
-              <option value="NP_0point5">NP_0point5</option>
-              <option value="NP_1point0">NP_1point0</option>
-              <option value="NP_2point5">NP_2point5</option>
-              <option value="NP_5point0">NP_5point0</option>
-              <option value="NP_10">NP_10</option>
-              <option value="PM1point0_ATM">PM1point0_ATM</option>
-              <option value="PM1point0_CF">PM1point0_CF</option>
-              <option value="PM2point0_CF">PM2point0_CF</option>
-              <option value="PM2point5_ATM">PM2point5_ATM</option>
-              <option value="PM10_ATM">PM10_ATM</option>
-              <option value="PM10_CF">PM10_CF</option>
-            </select>
-          </div>
+      <div class="header">
+        Face Mask Filtration Efficiency Tester
+      </div>
+      <div class="container-wr">
+        <div class="container d-none">
+          <div class="container-inside">
+            <div class="viewOptions">
+              <div class="configuration-text heading-text">
+                Configuration
+              </div>
+              <div class="particle">
+                <div class="particle-text">
+                  Particle size:
+                </div>
+                <select class="i-particle-dimension" name="i-particle-dimension">
+                  <option value="NP_0point3">NP_0point3</option>
+                  <option value="NP_0point5">NP_0point5</option>
+                  <option value="NP_1point0">NP_1point0</option>
+                  <option value="NP_2point5">NP_2point5</option>
+                  <option value="NP_5point0">NP_5point0</option>
+                  <option value="NP_10">NP_10</option>
+                  <option value="PM1point0_ATM">PM1point0_ATM</option>
+                  <option value="PM1point0_CF">PM1point0_CF</option>
+                  <option value="PM2point0_CF">PM2point0_CF</option>
+                  <option value="PM2point5_ATM">PM2point5_ATM</option>
+                  <option value="PM10_ATM">PM10_ATM</option>
+                  <option value="PM10_CF">PM10_CF</option>
+                </select>
 
-          <div class="setting">
-            <div class="setting-text">
-              Setting
-            </div>
-            <div class="setting-options">
-              <div class="setting-item">
-                IP: <input class="i-ip" type="text" name="i-ip" value="192.168.0.185">
+                <div class="advanced-setting-icon">
+                  <i style="font-size:24px" class="fa fa-wrench"></i>
+                </div>
+                <div class="data-running-icon" data-status='on'>
+                  <i style="font-size:24px" class="fa fa-spin  data-status-icon">&#xf013;</i>
+                </div>
               </div>
-              <div class="setting-item">
-                RefreshRate (ms): <input class="i-refreshRate" type="text" name="i-refreshRate" value="10000">
-              </div>
-              <div class="setting-item">
-                Graph colour: <input class="i-graphColour" type="text" name="i-graphColour" value="rgb(100, 99, 255)">
-              </div>
-              <div class="setting-item">
-                Graph background colour: <input class="i-graphBgColour" type="text" name="i-graphBgColour" value="rgba(255, 255, 255, 0)">
-              </div>
-            </div>
-            <div class="filters">
-              <div class="filter-text">
-                Add filters
-              </div>
-              <div class="filter-items">
-                <div class="efficiency-measure">
-                  <input type="range" class name="vol" min="0" max="50">
+
+              <div class="setting d-none">
+                <div class="setting-text heading-text">
+                  Advance setting
+                </div>
+                <div class="setting-options">
+                  <div class="setting-item">
+                    <div class="setting-name setting-components">
+                      IP:
+                    </div>
+                    <div class="setting-input setting-components">
+                      <input class="i-ip" type="text" name="i-ip" value="192.168.0.185">
+                    </div>
+                    <div class="setting-btn setting-components">
+                      Set IP
+                    </div>
+                  </div>
+                  <div class="setting-item">
+                    RefreshRate (ms): <input class="i-refreshRate" type="text" name="i-refreshRate" value="10000">
+                  </div>
+                  <div class="setting-item">
+                    Graph colour: <input class="i-graphColour" type="text" name="i-graphColour" value="rgb(100, 99, 255)">
+                  </div>
+                  <div class="setting-item">
+                    Graph background colour: <input class="i-graphBgColour" type="text" name="i-graphBgColour" value="rgba(255, 255, 255, 0)">
+                  </div>
                 </div>
               </div>
             </div>
+            <div class="chart-container" style="position: relative;">
+              <canvas id="myChart"></canvas>
+            </div>
+            <div class="calculate-container">
+              <div class="filters">
+                <div class="filter-text heading-text">
+                  Add calculater to graph
+                </div>
+                <div class="filter-items">
+                  <div class="efficiency-item filter-item">
+                    <div class="efficiency-name filter-name filter-components">
+                      Efficiency
+                    </div>
+                    <div class="statistics-name filter-name filter-components">
+                      Data statistics
+                    </div>
+                    <input class="iefficiencyNoMaskStart" type="hidden" name="" value="">
+                    <input class="iefficiencyNoMaskStop" type="hidden" name="" value="">
+                    <input class="iefficiencyMaskStart" type="hidden" name="" value="">
+                    <input class="iefficiencyMaskStop" type="hidden" name="" value="">
+                  </div>
+                </div>
+
+                <div class="filter-result">
+                  <hr class="cal-seperation">
+                  <div class="filer-result-container headtwo">
+                    <div class="efficiency-result d-none">
+                      <div class="filer-name-text">
+                        Calculated Efficiency:
+                      </div>
+                      <div class="efficiency-value-wr">
+                        <div class="efficiency-value filter-value">
+                          Null
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <hr class="cal-seperation">
+                </div>
+              </div>
+            </div>
+            <div class="downloadData">
+              <div class="downloadBtn">
+                Download Current data
+              </div>
+              <div class="downloadAllBtn downloadBtn">
+                Download All data
+              </div>
+            </div>
           </div>
         </div>
-        <div class="chart-container" style="position: relative; width:100%;">
-          <canvas id="myChart"></canvas>
-        </div>
-        <div class="downloadData">
-          <div class="downloadBtn">
-            Download Current data
-          </div>
-          <div class="downloadAllBtn downloadBtn">
-            Download All data
+        <div class="startContainer">
+          <div class="startCircle">
+            <div class="startBtn">
+              Start
+            </div>
           </div>
         </div>
-      </div>
-      <div class="startContainer">
-        <div class="startCircle">
-          <div class="startBtn">
-            Start
-          </div>
+        <div class="footer">
+
         </div>
       </div>
     </div>
