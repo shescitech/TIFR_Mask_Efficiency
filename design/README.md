@@ -19,6 +19,13 @@ Have a look at our pre-print to get more insight of our work
 [Recharging improves efficiency of decontaminated N95 masks](https://arxiv.org/abs/2004.13641)
 
 
+## Design of the Mask Tester
+![alt Mask](https://github.com/shescitech/TIFR_Mask_Efficiency/blob/master/design/MaskTeseterClosed.jpg?raw=true)
+
+![alt Mask](https://raw.githubusercontent.com/shescitech/TIFR_Mask_Efficiency/master/design/MaskTesterOpen.jpg)
+
+
+
 ## About us
 
 We are a small group in TIFR working on the design of low cost mask testing equipment and efficient mask design. 
