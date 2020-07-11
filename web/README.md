@@ -5,6 +5,6 @@ This folder consists of code to visualize the particles count and calculate mask
 
 ## Procedure to use the it
 
-Download the code
-Open the index.html in your web browser
-Click start to start accuring data
+1. Download the code
+2. Open the index.html in your web browser
+3. Click start to start accuring data
