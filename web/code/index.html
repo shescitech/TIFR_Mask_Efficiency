@@ -22,6 +22,9 @@
         padding-top: 10px;
         padding-bottom: 10px;
       }
+      .container-wr{
+        width: 100%;
+      }
       .container{
         width:100%;
         max-width:800px;
@@ -49,11 +52,11 @@
       }
       .advanced-setting-icon{
         width: 24px;
-        margin-right: 10px;
+        margin-left: 20px;
+        margin-right: 20px;
       }
       .data-running-icon{
           width: 24px;
-          margin-right: 10px;
       }
       .data-running-icon:hover{
         cursor: pointer;
@@ -162,6 +165,9 @@
         font-size: 1.8rem;
         color: white;
       }
+      .cal-result{
+        margin-right:20px;
+      }
       .myChart{
         width:100%;
       }
@@ -182,15 +188,67 @@
         cursor: pointer;
         background-color: rgba(0, 0, 0, 0.6);
       }
+      .footer{
+        margin-top: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+      .footer-container{
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .footer-block{
+        margin:10px 20px;
+      }
 
+      .footer-block1{
+        flex: 1 0 300px;
+      }
+      .footer-block2{
+        flex: 1 0 300px;
+      }
+      .footer-block3{
+        flex: 1 0 200px;
+      }
 
+      .footer-blockname{
+        color: rgba(0, 0, 0, 0.9);
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
+      .fitemLink{
+        text-decoration: none;
+        color: rgba(0, 0, 0, 0.7);
+      }
+      .fitemLink:hover{
+        color: rgba(0, 0, 0, 1);
+      }
+      .fitemText{
+        margin-top: 7px;
+        margin-bottom: 7px;
+      }
+      .avater{
+        height: 50px;
+        width:50px;
+        border-radius: 50%;
 
+      }
+      .contributers{
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .contributer-wr{
+        margin:5px;
+      }
 
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" charset="utf-8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="js/chartjs-plugin-annotation.min.js"></script>
     <script src="js/chartjs-plugin-draggable.min.js"></script>
+    <script src="js/statistics.min.js"></script>
     <script type="text/javascript">
       //Supporting functions
       function getClass(className){
@@ -250,10 +308,12 @@
         getClass('efficiency-name').addEventListener('click', toggleEfficiency, false);
         getClass('advanced-setting-icon').addEventListener('click', toggleAdvancedSetting, false);
         getClass('data-running-icon').addEventListener('click', toggleDataRequest, false);
+        getClass('statistics-name').addEventListener('click', toggleStatistics, false);
+        addFooter();
       }
       function startProcess(){
         getClass('startContainer').classList.toggle('d-none');
-        getClass('container').classList.toggle('d-none');
+        getClass('container-wr').classList.toggle('d-none');
         plot(indiData.my_time, indiData.NP_0point3, '0.3 um')
         getData();
         dataRequestHandler=window.setInterval(function(){
@@ -269,7 +329,6 @@
 
       async function getData(){
         var latestdata= await axios.get('http://'+staticData.ip);
-        console.log(latestdata.data)
         addData(latestdata.data)
         return latestdata.data;
       }
@@ -294,7 +353,6 @@
         var n = d.getTime();
 
         var timeinSec=Math.round((n-initialData.time)/1000)
-        console.log(timeinSec);
         indiData.my_time.push(timeinSec)
         addDataToPlot(chart, timeinSec, latestData['NP_0.3'])
       }
@@ -302,7 +360,6 @@
 
 
       function plot(labels, dataPoint, label){
-        console.log('Hello');
         var ctx = document.getElementById('myChart').getContext('2d');
          chart = new Chart(ctx, {
           type: 'line',
@@ -351,9 +408,16 @@
       function toggleEfficiency(e){
         var datasetLength=indiData['NP_0point3'].length;
         if(datasetLength>=10){
-          addEfficiencyRange();
           this.classList.toggle('filter-selected');
           getClass('efficiency-result').classList.toggle('d-none')
+          var effDataStatus=getClass('efficiency-name').getAttribute('data-status')
+          if(effDataStatus=='inactive'){
+            addEfficiencyRange();
+            getClass('efficiency-name').setAttribute('data-status', 'active')
+          }else if(effDataStatus=='active'){
+            removeEfficiencyRange()
+            getClass('efficiency-name').setAttribute('data-status', 'inactive')
+          }
         }else{
           alert('Please wait till I gather enough data');
         }
@@ -375,16 +439,75 @@
       }
 
       function removeEfficiencyRange(){
-        getAnotationById(chart, 'efficiencyNoMaskStart')=''
+        removeAnotationById(chart, 'efficiencyNoMaskStart');
+        removeAnotationById(chart, 'efficiencyNoMaskStop');
+        removeAnotationById(chart, 'efficiencyMaskStart');
+        removeAnotationById(chart, 'efficiencyMaskStop');
+        chart.update();
       }
 
       function calculateEfficiency(){
         var currentDimension=getClass('i-particle-dimension').value
-        var withoutMask=average(indiData[currentDimension].slice(getClass('iefficiencyNoMaskStart').value,getClass('iefficiencyNoMaskStop').value))
-        var withMask=average(indiData[currentDimension].slice(getClass('iefficiencyMaskStart').value,getClass('iefficiencyMaskStop').value));
+        var withoutMask=average(indiData[currentDimension].slice(parseInt(getClass('iefficiencyNoMaskStart').value),parseInt(getClass('iefficiencyNoMaskStop').value)))
+        var withMask=average(indiData[currentDimension].slice(parseInt(getClass('iefficiencyMaskStart').value),parseInt(getClass('iefficiencyMaskStop').value)));
         var efficiencyValue=Math.round((1-withMask/withoutMask)*100)
         getClass('efficiency-value').innerHTML=efficiencyValue+'%';
         getClass('efficiency-value-wr').style.backgroundColor=`rgba(${(100-efficiencyValue)/100*255}, ${(efficiencyValue)/100*255}, 0, 0.9)`;
+      }
+
+      function toggleStatistics(){
+        var datasetLength=indiData['NP_0point3'].length;
+        if(datasetLength>=6){
+          this.classList.toggle('filter-selected');
+          getClass('statistics-result').classList.toggle('d-none')
+          var statDataStatus=getClass('statistics-name').getAttribute('data-status')
+          if(statDataStatus=='inactive'){
+            addStatisticsRange();
+            getClass('statistics-name').setAttribute('data-status', 'active')
+          }else if(statDataStatus=='active'){
+            removeStatisticsRange()
+            getClass('statistics-name').setAttribute('data-status', 'inactive')
+          }
+        }else{
+          alert('Please wait till I gather enough data');
+        }
+
+      }
+
+      function addStatisticsRange(){
+        var datasetLength=indiData['NP_0point3'].length;
+        var seperation=Math.round(datasetLength/3)
+        if(datasetLength<6){
+          alert('Not enough data. Please collec some more data before looking at the statistics');
+        }else{
+          addAnotate({value:indiData['my_time'][seperation], id:'statisticsStart', labelContent:'Start', indexValue:seperation, color:'rgba(0,0,0,0.5)', fun:statisticsDrag})
+          addAnotate({value:indiData['my_time'][2*seperation], id:'statisticsStop', labelContent:'End', indexValue:2*seperation, color:'rgba(0,0,0,0.5)', fun:statisticsDrag})
+        }
+        calculateStatistics();
+      }
+
+      function removeStatisticsRange(){
+        removeAnotationById(chart, 'statisticsStart');
+        removeAnotationById(chart, 'statisticsStop');
+        chart.update();
+      }
+
+      function calculateStatistics(){
+        var currentDimension=getClass('i-particle-dimension').value;
+        var dataStart=parseInt(getClass('istatisticsStart').value);
+        var dataEnd=parseInt(getClass('istatisticsStop').value);
+        var dataForSatistics=[];
+        for(var i=dataStart; i<=dataEnd;i++){
+          dataForSatistics.push({id:i, data:indiData[currentDimension][i]})
+        }
+        var columns = {id: 'ordinal',data: 'interval'};
+        var settings={}
+        var stats = new Statistics(dataForSatistics, columns, settings);
+
+        var dataAverage=stats.arithmeticMean("data").toFixed(2);
+        var stdDev = stats.standardDeviation("data").toFixed(2);
+        getClass('average-value').innerHTML=dataAverage;
+        getClass('standardDeviation-value').innerHTML=stdDev;
       }
 
       function getAnotationById(chart, id){
@@ -392,6 +515,16 @@
         for(var i=0; i<anotations.length; i++){
           if(chart.options.annotation.annotations[i].id==id){
             return chart.options.annotation.annotations[i];
+          }
+        }
+        return false;
+      }
+      function removeAnotationById(chart, id){
+        var anotations=chart.options.annotation.annotations
+        for(var i=0; i<anotations.length; i++){
+          if(chart.options.annotation.annotations[i].id==id){
+             chart.options.annotation.annotations.splice(i, 1);
+             return true;
           }
         }
         return false;
@@ -413,7 +546,7 @@
                content: labelContent
             },
             onMouseout: function(e) {
-              alert('hello hi');
+
             },
             draggable: true,
             onDrag: fun
@@ -425,10 +558,14 @@
       function efficiencyDrag(event) {
           this.value=indiData['my_time'][event.subject.config.value];
           getClass('i'+this.id).value=indiData['my_time'].indexOf(event.subject.config.value);
-          console.log(event.subject);
-          console.log(this);
           chart.update()
           calculateEfficiency();
+      }
+      function statisticsDrag(event) {
+          this.value=indiData['my_time'][event.subject.config.value];
+          getClass('i'+this.id).value=indiData['my_time'].indexOf(event.subject.config.value);
+          chart.update()
+          calculateStatistics();
       }
 
       const average = arr => arr.reduce( ( p, c ) => parseFloat(p) + parseFloat(c), 0 ) / arr.length;
@@ -487,6 +624,33 @@
         }
       }
 
+
+      function shuffleArray(array) {
+          for (var i = array.length - 1; i > 0; i--) {
+              var j = Math.floor(Math.random() * (i + 1));
+              var temp = array[i];
+              array[i] = array[j];
+              array[j] = temp;
+          }
+      }
+
+
+      function addFooter(){
+        var contributers=[{name: 'Emroj Hossain', link:'https://www.linkedin.com/in/emroj/', photo:'images/emroj.png'},
+                          {name: 'Soumen Das', link:'https://www.tifr.res.in/~softmatter/soumen.html', photo:'images/soumen.jpg'},
+                          {name: 'Satyanu Bhadra', link:'https://www.tifr.res.in/~softmatter/satyanu.html', photo:'images/satyanu.jpg'},
+                          {name: 'Harsh Jain', link:'https://github.com/harshjn', photo:'images/harsh.jpg'},
+                          {name: 'Prof. Shankar Ghosh', link:'https://www.tifr.res.in/~softmatter/shankar.html', photo:'images/shankar.jpg'},
+                          {name: 'Prof Arnab Bhattacharya', link:'https://www.tifr.res.in/~dcmpms/arnab_bhattacharya.php', photo:'images/arnab.png'}
+                        ]
+        shuffleArray(contributers)
+        contributerHTML=''
+        for (var j=0; j<contributers.length; j++){
+          contributerHTML=contributerHTML+`<div class="footer-item-wr contributer-wr"><a class="profileLink fitemLink" href="${contributers[j].link}"><div class="avater contributer" style="background:url(${contributers[j].photo});   background-size: contain;"></div></a></div>`
+        }
+        getClass('contributers').innerHTML=contributerHTML
+      }
+
     </script>
   </head>
   <body>
@@ -494,8 +658,8 @@
       <div class="header">
         Face Mask Filtration Efficiency Tester
       </div>
-      <div class="container-wr">
-        <div class="container d-none">
+      <div class="container-wr d-none">
+        <div class="container">
           <div class="container-inside">
             <div class="viewOptions">
               <div class="configuration-text heading-text">
@@ -566,23 +730,25 @@
                 </div>
                 <div class="filter-items">
                   <div class="efficiency-item filter-item">
-                    <div class="efficiency-name filter-name filter-components">
+                    <div class="efficiency-name filter-name filter-components" data-status='inactive'>
                       Efficiency
                     </div>
-                    <div class="statistics-name filter-name filter-components">
+                    <div class="statistics-name filter-name filter-components" data-status='inactive'>
                       Data statistics
                     </div>
                     <input class="iefficiencyNoMaskStart" type="hidden" name="" value="">
                     <input class="iefficiencyNoMaskStop" type="hidden" name="" value="">
                     <input class="iefficiencyMaskStart" type="hidden" name="" value="">
                     <input class="iefficiencyMaskStop" type="hidden" name="" value="">
+                    <input class="istatisticsStart" type="hidden" name="" value="">
+                    <input class="istatisticsStop" type="hidden" name="" value="">
                   </div>
                 </div>
 
                 <div class="filter-result">
-                  <hr class="cal-seperation">
+                  <!-- <hr class="cal-seperation"> -->
                   <div class="filer-result-container headtwo">
-                    <div class="efficiency-result d-none">
+                    <div class="efficiency-result d-none cal-result">
                       <div class="filer-name-text">
                         Calculated Efficiency:
                       </div>
@@ -592,8 +758,21 @@
                         </div>
                       </div>
                     </div>
+                    <div class="statistics-result d-none cal-result">
+                      <div class="filer-name-text">
+                        Data statistics:
+                      </div>
+                      <div class="statistics-value-wr">
+                        Average :<div class="average-value filter-value">
+                          Null
+                        </div>
+                        Standard Deviation: <div class="standardDeviation-value filter-value">
+                          Null
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <hr class="cal-seperation">
+                  <!-- <hr class="cal-seperation"> -->
                 </div>
               </div>
             </div>
@@ -607,15 +786,67 @@
             </div>
           </div>
         </div>
-        <div class="startContainer">
-          <div class="startCircle">
-            <div class="startBtn">
-              Start
+        <div class="footer">
+          <div class="footer-container">
+            <div class="footer-block footer-block1">
+              <div class="footer-items-wr">
+                <div class="footer-blockname">
+                  Related links
+                </div>
+                <div class="footer-items">
+                  <div class="fitem-wr">
+                    <a class="fitemLink" href="https://arxiv.org/abs/2004.13641"><div class="fitemText">Publications</div></a>
+                    <a class="fitemLink" href="https://www.youtube.com/watch?v=g4IA0ZvEA3Y"><div class="fitemText">Mask recharging</div></a>
+                    <a class="fitemLink" href="https://www.youtube.com/watch?v=BYmyFGL4pKI"><div class="fitemText">Science of face mask</div></a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="footer-block footer-block2">
+              <div class="footer-items-wr">
+                <div class="footer-blockname">
+                  More About Design
+                </div>
+                <div class="footer-items">
+                  <div class="fitem-wr">
+                    <a class="fitemLink" href="https://github.com/shescitech/TIFR_Mask_Efficiency"><div class="fitemText">Github</div></a>
+                    <a class="fitemLink" href="https://github.com/shescitech/TIFR_Mask_Efficiency/tree/master/design"><div class="fitemText">Mask tester design</div></a>
+                    <a class="fitemLink" href="https://github.com/shescitech/TIFR_Mask_Efficiency/tree/master/Arduino"><div class="fitemText">Arduino code</div></a>
+                    <a class="fitemLink" href="https://github.com/shescitech/TIFR_Mask_Efficiency/tree/master/web"><div class="fitemText">Web Interface</div></a>
+                    <a class="fitemLink" href="#"><div class="fitemText">Documentation</div></a>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+            <div class="footer-block footer-block3">
+              <div class="footerblock-wr">
+                <div class="footer-items-wr">
+                  <div class="footer-blockname">
+                    Contributers
+                  </div>
+                  <div class="footer-item-wr contributers">
+                    <div class="avater">
+
+                    </div>
+                    <div class="name">
+                      Hello
+                    </div>
+
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="footer">
-
+      </div>
+      <div class="startContainer">
+        <div class="startCircle">
+          <div class="startBtn">
+            Start
+          </div>
         </div>
       </div>
     </div>
