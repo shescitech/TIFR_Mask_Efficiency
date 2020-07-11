@@ -106,6 +106,40 @@
       }
       .setting-components{
       }
+      .setting-item{
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 450px;
+        margin-bottom: 10px;
+      }
+      .setting-name{
+        flex: 0 0 150px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+      .setting-input{
+        flex: 1 1 100px;
+      }
+      .i-stting{
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      .setting-btn{
+        flex: 0 0 100px;
+        background-color: rgba(40, 116, 240, 0.9);
+        text-align: center;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        color:rgba(255, 255, 255, 0.9);
+      }
+      .setting-btn:hover{
+        background-color: rgba(40, 116, 240, 1);
+        color:rgba(255, 255, 255, 1);
+      }
       .cal-seperation{
         margin-top: 20px;
         margin-bottom: 20px;
@@ -131,6 +165,7 @@
       }
       .filter-name{
         border-style: solid;
+        border-color: rgba(76, 175, 140, 1);
         padding: 5px 10px;
         border-width: thin;
         font-size: 1.1rem;
@@ -138,11 +173,11 @@
         margin-right: 20px;
       }
       .filter-name:hover{
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(76, 175, 80, 1);
         cursor: pointer;
       }
       .filter-selected{
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color:rgba(76, 175, 80, 1);
       }
       .filer-result-container{
         display: flex;
@@ -180,13 +215,15 @@
         padding: 10px 20px;
         width:200px;
         text-align: center;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(40, 116, 240, 0.9);
         font-size: 1.3em;
         border-radius: 5px;
+        color:rgba(255, 255, 255, 0.9);
       }
       .downloadBtn:hover{
         cursor: pointer;
-        background-color: rgba(0, 0, 0, 0.6);
+        background-color: rgba(40, 116, 240, 1);
+        color:rgba(255, 255, 255, 1);
       }
       .footer{
         margin-top: 20px;
@@ -233,7 +270,6 @@
         height: 50px;
         width:50px;
         border-radius: 50%;
-
       }
       .contributers{
         display: flex;
@@ -272,7 +308,7 @@
       // Static variable definition
       var staticData={
         ip:'192.168.0.185',
-        refreshRate: 10000
+        refreshRate: 20000
       }
       window.onload=init;
       var initialTime = new Date();
@@ -309,12 +345,36 @@
         getClass('advanced-setting-icon').addEventListener('click', toggleAdvancedSetting, false);
         getClass('data-running-icon').addEventListener('click', toggleDataRequest, false);
         getClass('statistics-name').addEventListener('click', toggleStatistics, false);
+        getClass('ip-set').addEventListener('click', setIP, false);
+        getClass('rr-set').addEventListener('click', setRefreshRate, false);
+        getClass('gc-set').addEventListener('click', setGraphColor, false);
+        getClass('gbgc-set').addEventListener('click', setGraphBackground, false);
         addFooter();
+      }
+
+
+      function setIP(){
+        staticData.ip=getClass('i-ip').value;
+        stopData();
+        restartData();
+      }
+      function setRefreshRate(){
+        staticData.refreshRate=getClass('i-refreshRate').value;
+        stopData();
+        restartData();
+      }
+      function setGraphColor(){
+        chart.data.datasets[0].borderColor=getClass('i-graphColour').value;
+        chart.update()
+      }
+      function setGraphBackground(){
+        chart.data.datasets[0].backgroundColor=getClass('i-graphBackground').value;
+        chart.update()
       }
       function startProcess(){
         getClass('startContainer').classList.toggle('d-none');
         getClass('container-wr').classList.toggle('d-none');
-        plot(indiData.my_time, indiData.NP_0point3, '0.3 um')
+        plot(indiData.my_time, indiData.NP_0point3, 'Data corresponding to 0.3 um counts')
         getData();
         dataRequestHandler=window.setInterval(function(){
           getData()
@@ -368,7 +428,7 @@
             datasets: [{
               label: label,
               backgroundColor: 'rgba(255, 255, 255, 0)',
-              borderColor: 'rgb(100, 99, 255)',
+              borderColor: 'rgba(100, 99, 255, 1)',
               data: dataPoint
             },
             // {
@@ -400,7 +460,7 @@
         var currentParticleDimension=getClass('i-particle-dimension').value;
         var currentParticleDimensionText=this.options[this.selectedIndex].text;
         chart.data.labels=indiData.my_time;
-        chart.data.datasets[0].label=currentParticleDimensionText;
+        chart.data.datasets[0].label='Data corresponding to '+currentParticleDimensionText;
         chart.data.datasets[0].data=indiData[currentParticleDimension];
         chart.update();
       }
@@ -574,8 +634,8 @@
         var currentParticleDimension=getClass('i-particle-dimension').value;
         var totalData='Time, '+currentParticleDimension+'\n'
         for (var i = 0; i < indiData['NP_0point3'].length; i++) {
-          totalData=totalData+indiData[currentParticleDimension][i]
-          totalData=totalData+ ', '+indiData['my_time'][i]
+          totalData=totalData+indiData['my_time'][i]
+          totalData=totalData+ ', '+indiData[currentParticleDimension][i]
           totalData=totalData+ '\n';
         }
         downloadFile(totalData, 'niskars.csv')
@@ -639,14 +699,14 @@
         var contributers=[{name: 'Emroj Hossain', link:'https://www.linkedin.com/in/emroj/', photo:'images/emroj.png'},
                           {name: 'Soumen Das', link:'https://www.tifr.res.in/~softmatter/soumen.html', photo:'images/soumen.jpg'},
                           {name: 'Satyanu Bhadra', link:'https://www.tifr.res.in/~softmatter/satyanu.html', photo:'images/satyanu.jpg'},
-                          {name: 'Harsh Jain', link:'https://github.com/harshjn', photo:'images/harsh.jpg'},
+                          {name: 'Harsh Jain', link:'https://www.tifr.res.in/~softmatter/harsh.html', photo:'images/harsh.jpg'},
                           {name: 'Prof. Shankar Ghosh', link:'https://www.tifr.res.in/~softmatter/shankar.html', photo:'images/shankar.jpg'},
                           {name: 'Prof Arnab Bhattacharya', link:'https://www.tifr.res.in/~dcmpms/arnab_bhattacharya.php', photo:'images/arnab.png'}
                         ]
         shuffleArray(contributers)
         contributerHTML=''
         for (var j=0; j<contributers.length; j++){
-          contributerHTML=contributerHTML+`<div class="footer-item-wr contributer-wr"><a class="profileLink fitemLink" href="${contributers[j].link}"><div class="avater contributer" style="background:url(${contributers[j].photo});   background-size: contain;"></div></a></div>`
+          contributerHTML=contributerHTML+`<div class="footer-item-wr contributer-wr"><a class="profileLink fitemLink" href="${contributers[j].link}"><div class="avater contributer" style="background:url(${contributers[j].photo});   background-size: cover;"></div></a></div>`
         }
         getClass('contributers').innerHTML=contributerHTML
       }
@@ -670,18 +730,18 @@
                   Particle size:
                 </div>
                 <select class="i-particle-dimension" name="i-particle-dimension">
-                  <option value="NP_0point3">NP_0point3</option>
-                  <option value="NP_0point5">NP_0point5</option>
-                  <option value="NP_1point0">NP_1point0</option>
-                  <option value="NP_2point5">NP_2point5</option>
-                  <option value="NP_5point0">NP_5point0</option>
-                  <option value="NP_10">NP_10</option>
-                  <option value="PM1point0_ATM">PM1point0_ATM</option>
-                  <option value="PM1point0_CF">PM1point0_CF</option>
-                  <option value="PM2point0_CF">PM2point0_CF</option>
-                  <option value="PM2point5_ATM">PM2point5_ATM</option>
-                  <option value="PM10_ATM">PM10_ATM</option>
-                  <option value="PM10_CF">PM10_CF</option>
+                  <option value="NP_0point3">0.3 &mu;m counts</option>
+                  <option value="NP_0point5">0.5 &mu;m counts</option>
+                  <option value="NP_1point0">1.0  &mu;m counts</option>
+                  <option value="NP_2point5">2.5  &mu;m counts</option>
+                  <option value="NP_5point0">5.0  &mu;m counts</option>
+                  <option value="NP_10">10  &mu;m counts</option>
+                  <option value="PM1point0_ATM">1.0 concentration (&mu;g/m^3) atmospheric</option>
+                  <option value="PM1point0_CF">1.0 concentration (&mu;g/m^3) CF=1</option>
+                  <option value="PM2point0_CF">2.0 concentration (&mu;g/m^3) CF=1</option>
+                  <option value="PM2point5_ATM">2.0 concentration (&mu;g/m^3) atmospheric</option>
+                  <option value="PM10_ATM">10 concentration (&mu;g/m^3) atmospheric</option>
+                  <option value="PM10_CF">2.0 concentration (&mu;g/m^3) CF=1</option>
                 </select>
 
                 <div class="advanced-setting-icon">
@@ -702,20 +762,44 @@
                       IP:
                     </div>
                     <div class="setting-input setting-components">
-                      <input class="i-ip" type="text" name="i-ip" value="192.168.0.185">
+                      <input class="i-ip i-stting" type="text" name="i-ip" value="192.168.0.185">
                     </div>
-                    <div class="setting-btn setting-components">
-                      Set IP
+                    <div class="setting-btn setting-components ip-set">
+                      Set
                     </div>
                   </div>
                   <div class="setting-item">
-                    RefreshRate (ms): <input class="i-refreshRate" type="text" name="i-refreshRate" value="10000">
+                    <div class="setting-name setting-components">
+                      RefreshRate (ms):
+                    </div>
+                    <div class="setting-input setting-components">
+                      <input class="i-refreshRate i-stting" type="text" name="i-refreshRate" value="10000">
+                    </div>
+                    <div class="setting-btn setting-components rr-set">
+                      Set
+                    </div>
                   </div>
                   <div class="setting-item">
-                    Graph colour: <input class="i-graphColour" type="text" name="i-graphColour" value="rgb(100, 99, 255)">
+                    <div class="setting-name setting-components">
+                      Graph colour:
+                    </div>
+                    <div class="setting-input setting-components">
+                      <input class="i-graphColour i-stting" type="text" name="i-graphColour" value="rgba(100, 99, 255, 1)">
+                    </div>
+                    <div class="setting-btn setting-components gc-set">
+                      Set
+                    </div>
                   </div>
                   <div class="setting-item">
-                    Graph background colour: <input class="i-graphBgColour" type="text" name="i-graphBgColour" value="rgba(255, 255, 255, 0)">
+                    <div class="setting-name setting-components">
+                      Graph BG colour:
+                    </div>
+                    <div class="setting-input setting-components">
+                      <input class="i-graphBackground i-stting" type="text" name="i-graphColour" value="rgba(255, 255, 255,0)">
+                    </div>
+                    <div class="setting-btn setting-components gbgc-set">
+                      Set
+                    </div>
                   </div>
                 </div>
               </div>
@@ -797,7 +881,7 @@
                   <div class="fitem-wr">
                     <a class="fitemLink" href="https://arxiv.org/abs/2004.13641"><div class="fitemText">Publications</div></a>
                     <a class="fitemLink" href="https://www.youtube.com/watch?v=g4IA0ZvEA3Y"><div class="fitemText">Mask recharging</div></a>
-                    <a class="fitemLink" href="https://www.youtube.com/watch?v=BYmyFGL4pKI"><div class="fitemText">Science of face mask</div></a>
+                    <a class="fitemLink" href="https://www.youtube.com/watch?v=BYmyFGL4pKI"><div class="fitemText">Science behind face mask</div></a>
                   </div>
                 </div>
 
@@ -814,7 +898,6 @@
                     <a class="fitemLink" href="https://github.com/shescitech/TIFR_Mask_Efficiency/tree/master/design"><div class="fitemText">Mask tester design</div></a>
                     <a class="fitemLink" href="https://github.com/shescitech/TIFR_Mask_Efficiency/tree/master/Arduino"><div class="fitemText">Arduino code</div></a>
                     <a class="fitemLink" href="https://github.com/shescitech/TIFR_Mask_Efficiency/tree/master/web"><div class="fitemText">Web Interface</div></a>
-                    <a class="fitemLink" href="#"><div class="fitemText">Documentation</div></a>
                   </div>
                 </div>
 
