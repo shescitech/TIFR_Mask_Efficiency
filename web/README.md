@@ -6,7 +6,7 @@ This folder consists of code to visualize the particles count and calculate mask
 ## Procedure to use the it
 
 1. Download the code
-2. Open the index.html in your web browser
+2. Open the index.html (in code folder) in your web browser
 3. Click start to start acquiring data
 4. Select particle size of your interest
 5. The data will be acquired over time and will be displayed on graph

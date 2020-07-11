@@ -326,7 +326,7 @@
         NP_10: [],
         PM1point0_ATM: [],
         PM1point0_CF: [],
-        PM2point0_CF: [],
+        PM2point5_CF: [],
         PM2point5_ATM: [],
         PM10_ATM: [],
         PM10_CF: [],
@@ -404,7 +404,7 @@
         indiData.NP_10.push(latestData['NP_10']),
         indiData.PM1point0_ATM.push(latestData['PM1.0_ATM']),
         indiData.PM1point0_CF.push(latestData['PM1.0_CF']),
-        indiData.PM2point0_CF.push(latestData['PM2.0_CF']),
+        indiData.PM2point5_CF.push(latestData['PM2.5_CF']),
         indiData.PM2point5_ATM.push(latestData['PM2.5_ATM']),
         indiData.PM10_ATM.push(latestData['PM10_ATM']),
         indiData.PM10_CF.push(latestData['PM10_CF']),
@@ -642,7 +642,7 @@
       }
 
       function downloadAllData(){
-        var totalData='my_time, NP_0point3, NP_0point5, NP_1point0, NP_2point5, NP_5point0, NP_10, PM1point0_ATM, PM1point0_CF, PM2point0_CF, PM2point5_ATM, PM10_ATM, PM10_CF, Time_passed \n';
+        var totalData='my_time, NP_0point3, NP_0point5, NP_1point0, NP_2point5, NP_5point0, NP_10, PM1point0_ATM, PM1point0_CF, PM2point5_CF, PM2point5_ATM, PM10_ATM, PM10_CF, Time_passed \n';
         for (var i = 0; i < indiData['NP_0point3'].length; i++) {
           totalData=totalData+indiData['my_time'][i]
           totalData=totalData + ', ' +indiData['NP_0point3'][i]
@@ -653,7 +653,7 @@
           totalData=totalData+ ', '+indiData['NP_10'][i]
           totalData=totalData+ ', '+indiData['PM1point0_ATM'][i]
           totalData=totalData+ ', '+indiData['PM1point0_CF'][i]
-          totalData=totalData+ ', '+indiData['PM2point0_CF'][i]
+          totalData=totalData+ ', '+indiData['PM2point5_CF'][i]
           totalData=totalData+ ', '+indiData['PM2point5_ATM'][i]
           totalData=totalData+ ', '+indiData['PM10_ATM'][i]
           totalData=totalData+ ', '+indiData['PM10_CF'][i]
@@ -736,12 +736,12 @@
                   <option value="NP_2point5">2.5  &mu;m counts</option>
                   <option value="NP_5point0">5.0  &mu;m counts</option>
                   <option value="NP_10">10  &mu;m counts</option>
-                  <option value="PM1point0_ATM">1.0 concentration (&mu;g/m^3) atmospheric</option>
-                  <option value="PM1point0_CF">1.0 concentration (&mu;g/m^3) CF=1</option>
-                  <option value="PM2point0_CF">2.0 concentration (&mu;g/m^3) CF=1</option>
-                  <option value="PM2point5_ATM">2.0 concentration (&mu;g/m^3) atmospheric</option>
-                  <option value="PM10_ATM">10 concentration (&mu;g/m^3) atmospheric</option>
-                  <option value="PM10_CF">2.0 concentration (&mu;g/m^3) CF=1</option>
+                  <option value="PM1point0_ATM">1.0 &mu;m concentration (&mu;g/m^3) atmospheric</option>
+                  <option value="PM1point0_CF">1.0 &mu;m concentration (&mu;g/m^3) CF=1</option>
+                  <option value="PM2point5_CF">2.5 &mu;m concentration (&mu;g/m^3) CF=1</option>
+                  <option value="PM2point5_ATM">2.5 &mu;m concentration (&mu;g/m^3) atmospheric</option>
+                  <option value="PM10_ATM">10 &mu;m concentration (&mu;g/m^3) atmospheric</option>
+                  <option value="PM10_CF">10 &mu;m concentration (&mu;g/m^3) CF=1</option>
                 </select>
 
                 <div class="advanced-setting-icon">
