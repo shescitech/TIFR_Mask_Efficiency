@@ -10,7 +10,7 @@ This folder consists of code to visualize the particles count and calculate mask
 3. Click start to start acquiring data
 4. Select particle size of your interest
 5. The data will be acquired over time and will be displayed on graph
-6. You can change the graph properties by clicking on the setting (wrench) button on top
+6. You can change the graph properties and the Ip adress of your device by clicking on the setting (wrench) button on top
 7. You can download current graph data by clicking on the "download current data" button
 8. You can download all data using "Download all data button"
 
