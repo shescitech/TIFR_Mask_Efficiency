@@ -423,6 +423,7 @@
 
       function plot(labels, dataPoint, label){
         var ctx = document.getElementById('myChart').getContext('2d');
+
          chart = new Chart(ctx, {
           type: 'line',
           data: {
@@ -510,8 +511,8 @@
 
       function calculateEfficiency(){
         var currentDimension=getClass('i-particle-dimension').value
-        var withoutMask=average(indiData[currentDimension].slice(parseInt(getClass('iefficiencyNoMaskStart').value),parseInt(getClass('iefficiencyNoMaskStop').value)))
-        var withMask=average(indiData[currentDimension].slice(parseInt(getClass('iefficiencyMaskStart').value),parseInt(getClass('iefficiencyMaskStop').value)));
+        var withoutMask=average(indiData[currentDimension].slice(parseInt(getClass('iefficiencyNoMaskStart').value),parseInt(getClass('iefficiencyNoMaskStop').value)+1))
+        var withMask=average(indiData[currentDimension].slice(parseInt(getClass('iefficiencyMaskStart').value),parseInt(getClass('iefficiencyMaskStop').value)+1));
         var efficiencyValue=Math.round((1-withMask/withoutMask)*100)
         getClass('efficiency-value').innerHTML=efficiencyValue+'%';
         getClass('efficiency-value-wr').style.backgroundColor=`rgba(${(100-efficiencyValue)/100*255}, ${(efficiencyValue)/100*255}, 0, 0.9)`;
