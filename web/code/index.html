@@ -848,7 +848,7 @@
 
       function downloadData(){
         var currentParticleDimension=getClass('i-particle-dimension').value;
-        var totalData='Time, '+currentParticleDimension+'\n'
+        var totalData='my_time, '+currentParticleDimension+'\n'
         for (var i = 0; i < indiData['NP_0point3'].length; i++) {
           totalData=totalData+indiData['my_time'][i]
           totalData=totalData+ ', '+indiData[currentParticleDimension][i]
@@ -966,10 +966,12 @@
         var  vnames=data[0]
         for(var i=1; i<data.length; i++){
           for (var j=0; j<vnames.length; j++){
-            console.log(vnames[j]);
-            console.log(data[i][j]);
-            indiData[vnames[j].trim()].push(data[i][j])
-            console.log(indiData[vnames[j]]);
+            try {
+              indiData[vnames[j].trim()].push(data[i][j])
+            }
+            catch(err) {
+            console.log(err.message);
+            }
           }
         }
         updateChart()
