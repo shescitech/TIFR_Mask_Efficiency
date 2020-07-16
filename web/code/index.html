@@ -290,6 +290,44 @@
         cursor: pointer;
         top:-10px;
       }
+      .data-upload-icon{
+        padding-left: 20px;
+        cursor: pointer;
+      }
+      .fileChooseModel-wr{
+        width:100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.7);
+        position: absolute;
+        top:0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fileChooseModel-container{
+        width:300px;
+        height: 200px;
+        background-color: rgba(255, 255, 255, 1);
+        display: flex;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fileChooseModel{
+        width: 150px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: white;
+        background-color: rgba(0, 100, 255, 1);
+
+      }
 
     </style>
     <script src="js/axios.min.js" charset="utf-8"></script>
@@ -299,6 +337,7 @@
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
     <script src="js/statistics.min.js"></script>
+    <script src="js/papaparse.min.js"></script>
     <script type="text/javascript">
       //Supporting functions
       function getClass(className){
@@ -331,23 +370,25 @@
       initialData={
         time:initialTime.getTime()
       }
-      dataHub=[];
-      indiData={
-        index:[],
-        NP_0point3: [],
-        NP_0point5: [],
-        NP_1point0: [],
-        NP_2point5: [],
-        NP_5point0: [],
-        NP_10: [],
-        PM1point0_ATM: [],
-        PM1point0_CF: [],
-        PM2point5_CF: [],
-        PM2point5_ATM: [],
-        PM10_ATM: [],
-        PM10_CF: [],
-        Time_passed: [],
-        my_time:[]
+      function initializeData(){
+        dataHub=[];
+        indiData={
+          index:[],
+          NP_0point3: [],
+          NP_0point5: [],
+          NP_1point0: [],
+          NP_2point5: [],
+          NP_5point0: [],
+          NP_10: [],
+          PM1point0_ATM: [],
+          PM1point0_CF: [],
+          PM2point5_CF: [],
+          PM2point5_ATM: [],
+          PM10_ATM: [],
+          PM10_CF: [],
+          Time_passed: [],
+          my_time:[]
+        }
       }
       index=0
       var dynamicData={
@@ -367,6 +408,7 @@
         chart.update();
       }
       function init(){
+        initializeData()
         getClass('startCircle').addEventListener('click', startProcess, false);
         getClass('i-particle-dimension').addEventListener('change', changeGraph, false);
         getClass('downloadBtn').addEventListener('click', downloadData, false);
@@ -381,7 +423,26 @@
         getClass('gbgc-set').addEventListener('click', setGraphBackground, false);
         getClass('downloadGraphBtn').addEventListener('click', downloadGraph, false);
         getClass('reset').addEventListener('click', resetZoom, false);
+        getClass('data-upload-icon').addEventListener('click', loadNew, false);
+        getClass('fileChooseModel').addEventListener('click', uploadFile, false);
+        getClass('i-upload').addEventListener('change', processFile, false);
+
         addFooter();
+        checkDataOperner()
+      }
+
+      function checkDataOperner(){
+        var location= window.location.href;
+        if(location.slice(location.length-1, location.length)=='#'){
+          processFileOpen();
+        }
+      }
+
+      function processFileOpen(){
+        getClass('startCircle').click();
+        //getClass('data-running-icon').click();
+        //toggleDataRequest()
+        getClass('fileChooseModel-wrc').classList.toggle('d-none')
       }
 
       function resetZoom(){
@@ -431,7 +492,6 @@
       }
 
       function addData(latestData){
-
         indiData.index.push(indiData.index.length+1)
         indiData.NP_0point3.push(parseFloat(latestData['NP_0.3'])),
         indiData.NP_0point5.push(parseFloat(latestData['NP_0.5'])),
@@ -543,7 +603,10 @@
               getClass('reset').classList.remove('d-none')
              },
             // Function called once zooming is completed
-            onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); }
+            onZoomComplete: function({chart}) {
+              console.log(`I was zoomed!!!`);
+              console.log(chart);
+             }
         }
 
 
@@ -871,6 +934,47 @@
         link.click();
       }
 
+      function loadNew(){
+         window.open("#");
+      }
+
+      function uploadFile(){
+        getClass('i-upload').click();
+      }
+
+      function processFile(){
+        getClass('fileChooseModel-wrc').classList.add('d-none')
+        console.log('Hello I am in processFile');
+        var fileInput=getClass('i-upload');
+        Papa.parse(fileInput.files[0], {
+        	complete: function(results) {
+        		console.log(results);
+            stopAll()
+            updateAllData(results.data)
+        	}
+        });
+      }
+
+      function stopAll(){
+        getClass('data-running-icon').click()
+      }
+
+
+
+      function updateAllData(data){
+        initializeData()
+        var  vnames=data[0]
+        for(var i=1; i<data.length; i++){
+          for (var j=0; j<vnames.length; j++){
+            console.log(vnames[j]);
+            console.log(data[i][j]);
+            indiData[vnames[j].trim()].push(data[i][j])
+            console.log(indiData[vnames[j]]);
+          }
+        }
+        updateChart()
+      }
+
 
 
     </script>
@@ -911,6 +1015,9 @@
                 </div>
                 <div class="data-running-icon" data-status='on'>
                   <i style="font-size:24px" class="fa fa-spin  data-status-icon">&#xf013;</i>
+                </div>
+                <div class="data-upload-icon" data-status='on'>
+                  <i style="font-size:24px" class="fa fa-upload" aria-hidden="true"></i>
                 </div>
               </div>
 
@@ -1100,6 +1207,17 @@
           <div class="startBtn">
             Start
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="fileChooseModel-wrc d-none">
+      <div class="fileChooseModel-wr">
+        <div class="fileChooseModel-container">
+          <input class="i-upload d-none" type="file" name="myfile" value="" accept=".csv">
+          <div class="fileChooseModel">
+            Choose your file
+          </div>
+
         </div>
       </div>
     </div>
