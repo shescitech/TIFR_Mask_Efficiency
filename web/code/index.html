@@ -280,12 +280,24 @@
       .contributer-wr{
         margin:5px;
       }
+      .reset-wr{
+        position: relative;
+        width: 100%
+      }
+      .reset{
+        position: absolute;
+        right:0px;
+        cursor: pointer;
+        top:-10px;
+      }
 
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" charset="utf-8"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="js/axios.min.js" charset="utf-8"></script>
+    <script src="js/chart.js@2.8.0"></script>
     <script src="js/chartjs-plugin-annotation.min.js"></script>
     <script src="js/chartjs-plugin-draggable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
     <script src="js/statistics.min.js"></script>
     <script type="text/javascript">
       //Supporting functions
@@ -312,6 +324,8 @@
         ip:'192.168.0.185',
         refreshRate: 20000
       }
+
+
       window.onload=init;
       var initialTime = new Date();
       initialData={
@@ -336,8 +350,22 @@
         my_time:[]
       }
       index=0
-
-
+      var dynamicData={
+        data:[]
+      }
+      function setDynamicData(name){
+        var dd=[]
+        for(var i=0; i<indiData['my_time'].length; i++){
+          dd.push({x:indiData['my_time'][i], y:indiData[name][i]})
+        }
+        dynamicData.data=dd;
+      }
+      function updateChart(){
+        var currentParticleDimension=getClass('i-particle-dimension').value;
+        setDynamicData(currentParticleDimension)
+        chart.data.datasets[0].data=dynamicData.data;
+        chart.update();
+      }
       function init(){
         getClass('startCircle').addEventListener('click', startProcess, false);
         getClass('i-particle-dimension').addEventListener('change', changeGraph, false);
@@ -351,7 +379,14 @@
         getClass('rr-set').addEventListener('click', setRefreshRate, false);
         getClass('gc-set').addEventListener('click', setGraphColor, false);
         getClass('gbgc-set').addEventListener('click', setGraphBackground, false);
+        getClass('downloadGraphBtn').addEventListener('click', downloadGraph, false);
+        getClass('reset').addEventListener('click', resetZoom, false);
         addFooter();
+      }
+
+      function resetZoom(){
+        chart.resetZoom();
+        getClass('reset').classList.add('d-none')
       }
 
 
@@ -396,43 +431,144 @@
       }
 
       function addData(latestData){
-        dataHub.push(latestData);
+
         indiData.index.push(indiData.index.length+1)
-        indiData.NP_0point3.push(latestData['NP_0.3']),
-        indiData.NP_0point5.push(latestData['NP_0.5']),
-        indiData.NP_1point0.push(latestData['NP_1.0']),
-        indiData.NP_2point5.push(latestData['NP_2.5']),
-        indiData.NP_5point0.push(latestData['NP_5.0']),
-        indiData.NP_10.push(latestData['NP_10']),
-        indiData.PM1point0_ATM.push(latestData['PM1.0_ATM']),
-        indiData.PM1point0_CF.push(latestData['PM1.0_CF']),
-        indiData.PM2point5_CF.push(latestData['PM2.5_CF']),
-        indiData.PM2point5_ATM.push(latestData['PM2.5_ATM']),
-        indiData.PM10_ATM.push(latestData['PM10_ATM']),
-        indiData.PM10_CF.push(latestData['PM10_CF']),
+        indiData.NP_0point3.push(parseFloat(latestData['NP_0.3'])),
+        indiData.NP_0point5.push(parseFloat(latestData['NP_0.5'])),
+        indiData.NP_1point0.push(parseFloat(latestData['NP_1.0'])),
+        indiData.NP_2point5.push(parseFloat(latestData['NP_2.5'])),
+        indiData.NP_5point0.push(parseFloat(latestData['NP_5.0'])),
+        indiData.NP_10.push(parseInt(parseFloat['NP_10'])),
+        indiData.PM1point0_ATM.push(parseFloat(latestData['PM1.0_ATM'])),
+        indiData.PM1point0_CF.push(parseFloat(latestData['PM1.0_CF'])),
+        indiData.PM2point5_CF.push(parseFloat(latestData['PM2.5_CF'])),
+        indiData.PM2point5_ATM.push(parseFloat(latestData['PM2.5_ATM'])),
+        indiData.PM10_ATM.push(parseFloat(latestData['PM10_ATM'])),
+        indiData.PM10_CF.push(parseFloat(latestData['PM10_CF'])),
         indiData.Time_passed.push(latestData['Time_passed'])
         var d = new Date();
         var n = d.getTime();
 
         var timeinSec=Math.round((n-initialData.time)/1000)
         indiData.my_time.push(timeinSec)
+        latestData.my_time=timeinSec
+        dataHub.push(latestData);
         addDataToPlot(chart, timeinSec, latestData['NP_0.3'])
+      }
+
+      var pan ={
+          // Boolean to enable panning
+          enabled: true,
+
+          // Panning directions. Remove the appropriate direction to disable
+          // Eg. 'y' would only allow panning in the y direction
+          // A function that is called as the user is panning and returns the
+          // available directions can also be used:
+          //   mode: function({ chart }) {
+          //     return 'xy';
+          //   },
+          mode: 'xy',
+
+          rangeMin: {
+              // Format of min pan range depends on scale type
+              x: null,
+              y: null
+          },
+          rangeMax: {
+              // Format of max pan range depends on scale type
+              x: null,
+              y: null
+          },
+
+          // On category scale, factor of pan velocity
+          speed: 20,
+
+          // Minimal pan distance required before actually applying pan
+          threshold: 10,
+
+          // Function called while the user is panning
+          onPan: function({chart}) { console.log(`I'm panning!!!`); },
+          // Function called once panning is completed
+          onPanComplete: function({chart}) { console.log(`I was panned!!!`); }
+      }
+
+      var zoom= {
+            // Boolean to enable zooming
+            enabled: true,
+
+            // Enable drag-to-zoom behavior
+            drag: true,
+
+            // Drag-to-zoom effect can be customized
+            // drag: {
+            // 	 borderColor: 'rgba(225,225,225,0.3)'
+            // 	 borderWidth: 5,
+            // 	 backgroundColor: 'rgb(225,225,225)',
+            // 	 animationDuration: 0
+            // },
+
+            // Zooming directions. Remove the appropriate direction to disable
+            // Eg. 'y' would only allow zooming in the y direction
+            // A function that is called as the user is zooming and returns the
+            // available directions can also be used:
+            //   mode: function({ chart }) {
+            //     return 'xy';
+            //   },
+            mode: 'xy',
+
+            rangeMin: {
+                // Format of min zoom range depends on scale type
+                x: null,
+                y: null
+            },
+            rangeMax: {
+                // Format of max zoom range depends on scale type
+                x: null,
+                y: null
+            },
+
+            // Speed of zoom via mouse wheel
+            // (percentage of zoom on a wheel event)
+            speed: 0.1,
+
+            // Minimal zoom distance required before actually applying zoom
+            threshold: 2,
+
+            // On category scale, minimal zoom level before actually applying zoom
+            sensitivity: 3,
+
+            // Function called while the user is zooming
+            onZoom: function({chart}) {
+              console.log(`I'm zooming!!!`);
+              getClass('reset').classList.remove('d-none')
+             },
+            // Function called once zooming is completed
+            onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); }
+        }
+
+
+        var scales={
+          xAxes: [{
+            type: 'linear',
+            ticks: {
+              beginAtZero: false,
+            }
+          }]
       }
 
 
 
       function plot(labels, dataPoint, label){
         var ctx = document.getElementById('myChart').getContext('2d');
-
          chart = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: labels,
+            //labels: labels,
             datasets: [{
               label: label,
               backgroundColor: 'rgba(255, 255, 255, 0)',
               borderColor: 'rgba(100, 99, 255, 1)',
-              data: dataPoint
+              data: dynamicData.data
             },
             // {
             //   label: label,
@@ -448,24 +584,24 @@
               annotations: [],
               drawTime: "afterDraw" // (default)
             },
+            scales:scales,
+            zoom:zoom,
+            //pan:pan
 
           }
         });
       }
 
       function addDataToPlot(chart, label, data) {
-        //chart.data.labels.push(label);
-        //chart.data.datasets[0].data.push(data);
-        chart.update();
+        updateChart()
       }
 
       function changeGraph() {
         var currentParticleDimension=getClass('i-particle-dimension').value;
         var currentParticleDimensionText=this.options[this.selectedIndex].text;
-        chart.data.labels=indiData.my_time;
+        //chart.data.labels=indiData.my_time;
         chart.data.datasets[0].label='Data corresponding to '+currentParticleDimensionText;
-        chart.data.datasets[0].data=indiData[currentParticleDimension];
-        chart.update();
+        updateChart()
       }
 
       function toggleEfficiency(e){
@@ -619,16 +755,30 @@
       }
 
       function efficiencyDrag(event) {
-          this.value=indiData['my_time'][event.subject.config.value];
-          getClass('i'+this.id).value=indiData['my_time'].indexOf(event.subject.config.value);
+
+          //this.value=indiData['my_time'][event.subject.config.value];
+          getClass('i'+this.id).value=getClosestIndex(indiData['my_time'], event.subject.config.value);
+
           chart.update()
           calculateEfficiency();
       }
       function statisticsDrag(event) {
-          this.value=indiData['my_time'][event.subject.config.value];
-          getClass('i'+this.id).value=indiData['my_time'].indexOf(event.subject.config.value);
+          //this.value=indiData['my_time'][event.subject.config.value];
+          getClass('i'+this.id).value=getClosestIndex(indiData['my_time'], event.subject.config.value);
           chart.update()
           calculateStatistics();
+      }
+
+      function getClosest(nums, given_num){
+        const closestReducer = g => (a, b) =>
+          Math.abs(g - a) < Math.abs(g - b) ? a : b
+
+         return nums.reduce(closestReducer(given_num))
+
+      }
+
+      function getClosestIndex(numbers, needle) {
+        return numbers.indexOf(getClosest(numbers, needle))
       }
 
       const average = arr => arr.reduce( ( p, c ) => parseFloat(p) + parseFloat(c), 0 ) / arr.length;
@@ -713,6 +863,15 @@
         }
         getClass('contributers').innerHTML=contributerHTML
       }
+
+      function downloadGraph(){
+        var link = document.createElement('a');
+        link.download = 'Graph.png';
+        link.href = document.getElementById('myChart').toDataURL()
+        link.click();
+      }
+
+
 
     </script>
   </head>
@@ -808,6 +967,11 @@
               </div>
             </div>
             <div class="chart-container" style="position: relative;">
+              <div class="reset-wr">
+                <div class="reset d-none">
+                  <i class="reset-icon fa fa-search-minus fa-2x"></i>
+                </div>
+              </div>
               <canvas id="myChart"></canvas>
             </div>
             <div class="calculate-container">
@@ -869,6 +1033,9 @@
               </div>
               <div class="downloadAllBtn downloadBtn">
                 Download all data
+              </div>
+              <div class="downloadGraphBtn downloadBtn">
+                Download graph
               </div>
             </div>
           </div>
