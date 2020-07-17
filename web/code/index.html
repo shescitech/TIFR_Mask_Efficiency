@@ -854,7 +854,7 @@
           totalData=totalData+ ', '+indiData[currentParticleDimension][i]
           totalData=totalData+ '\n';
         }
-        downloadFile(totalData, 'niskars.csv')
+        downloadFile(totalData, 'Filtration Data '+currentParticleDimension+' '+new Date().toDateString()+'.csv')
       }
 
       function downloadAllData(){
@@ -876,7 +876,7 @@
           totalData=totalData+ ', '+indiData['Time_passed'][i]
           totalData=totalData+ '\n';
         }
-        downloadFile(totalData, 'skimasasa.csv')
+        downloadFile(totalData, 'Filtration Data '+new Date().toDateString()+'.csv')
       }
 
       function stopData(){
