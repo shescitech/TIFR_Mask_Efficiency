@@ -929,7 +929,7 @@
 
       function downloadGraph(){
         var link = document.createElement('a');
-        link.download = 'Graph.png';
+        link.download = 'Graph '+new Date().toDateString()+'.png';
         link.href = document.getElementById('myChart').toDataURL()
         link.click();
       }
