@@ -12,6 +12,7 @@ This folder consists of code to inetgrate Plantower air quality sensor PMS7003 w
 5. Ther will be one by ESP8266 community. Select the latest version from the drop-down box and click install button. 
 
 ## Using the code
+
 1. After downloading the repository go to the "PMS7003_OTA_update_httpserver" folder and open the main code "PMS7003_OTA_update_httpserver.ino" file.
 2. Connect the esp8266 based board to your computer via a usb cable.
 3. Choose the correct port from Tools > Port. In case of windows operating system you can get the port no. from Device Manager > Ports. Look for the one which mentions usb-serial.
