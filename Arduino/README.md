@@ -20,6 +20,6 @@ This folder consists of code to inetgrate Plantower air quality sensor PMS7003 w
 5. In the expressions of "const char* ssid" and "const char* password" respectively, change the name and password of the WiFi network you want to connect to (inside the double        quotes).
 6. Upload the code from Sketch > Upload option.
 7. If there is no error, the uploadong will finish and arduino IDE will show a message something like "Leaving...Hard resetting via RTS pin" in the bottom black panel and reset      the board. This is not an error. It means your code is uploaded succesfully to the ESP module.
-8. Open the serial monitor from Tools > Serial Monitor to know the IP address of the ESP module. Alternatively you can also download any android application which supports local      mDNS, e.g. "BonjourBrowser" and get the IP address corresponding to the host "esp8266-webupdate". For this to work your smartphone must be connected to the same WiFi network as    the ESp module.
+8. Open the serial monitor from Tools > Serial Monitor to know the IP address of the ESP module. Alternatively you can also download any android application which supports local      mDNS, e.g. "BonjourBrowser" and get the IP address corresponding to the host "esp8266-webupdate". For this to work your smartphone must be connected to the same WiFi network as    the ESP module.
 
 
