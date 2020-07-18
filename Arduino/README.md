@@ -17,4 +17,4 @@ This folder consists of code to inetgrate Plantower air quality sensor PMS7003 w
 2. Connect the esp8266 based board to your computer via a usb cable.
 3. Choose the correct port from Tools > Port. In case of windows operating system you can get the port no. from Device Manager > Ports. Look for the one which mentions usb-serial.
 4. Go back to arduino IDE and select your ESP8266 board from Tools > Board menu after installation.
-5. 
+5. change the 
