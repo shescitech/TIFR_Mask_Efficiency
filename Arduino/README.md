@@ -9,7 +9,7 @@ This folder consists of code to inetgrate Plantower air quality sensor PMS7003 w
 2. Start Arduino application and open Preferences window.
 3. Enter https://arduino.esp8266.com/stable/package_esp8266com_index.json into Additional Board Manager URLs field.
 4. Open Boards Manager from Tools > Board menu and search for esp8266.
-5. Ther will be one by ESP8266 community. Select the latest version from the drop-down box and click install button. 
+5. There will be one by ESP8266 community. Select the latest version from the drop-down box and click install button. 
 
 ## Using the code
 
@@ -21,5 +21,6 @@ This folder consists of code to inetgrate Plantower air quality sensor PMS7003 w
 6. Upload the code from Sketch > Upload option.
 7. If there is no error, the uploadong will finish and arduino IDE will show a message something like "Leaving...Hard resetting via RTS pin" in the bottom black panel and reset      the board. This is not an error. It means your code is uploaded succesfully to the ESP module.
 8. Open the serial monitor from Tools > Serial Monitor to know the IP address of the ESP module. Alternatively you can also download any android application which supports local      mDNS, e.g. "BonjourBrowser" and get the IP address corresponding to the host "esp8266-webupdate". For this to work your smartphone must be connected to the same WiFi network as    the ESP module.
-9. Use the webpage
-
+9. Change the IP address in the downloaded html file and open it in any web browser use as instructed in the web folder.
+10. If you want to make changes to the code (e.g. change wifi name and password, acquisition rate in seconds etc.) you can change the required things and either upload it via         connecting the ESP module to the computer same as the initial setup (points 1 - 8) or you can do it via OTA (over the air) update through WiFi network without connecting           physically to the computer. Read below for OTA update.  
+11. 
