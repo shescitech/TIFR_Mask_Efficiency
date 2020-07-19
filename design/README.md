@@ -1,4 +1,4 @@
-# TIFR Mask Efficiency measurement and Enhancement Setup
+# TIFR Mask Efficiency Measurement and Enhancement Setup
 
 Here we present an easy to make Mask efficiency testing device using a Plantower 7003 sensor.
 This sensor has been traditionally used for measuring Air Quality Index.
