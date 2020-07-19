@@ -9,7 +9,7 @@ Have a look at our publication to get more insight of our work
 
 ## About us
 
-We are a small group in TIFR working on the design of low cost mask testing equipment and efficient mask design. 
+We are a small group in the Department of Condensed Matter Physics and Materials Science at Tata Institute of Fundamental Research (TIFR) in India working on the design of low cost mask testing equipment and efficient mask design. 
 
 
 ## Contact us
