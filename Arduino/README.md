@@ -6,14 +6,14 @@ This folder consists of arduino code to inetgrate Plantower air quality sensor P
 ## Installation
 
 1. Install the Arduino IDE from https://www.arduino.cc/en/Main/Software based on the operating system of your computer if it is not installed in your system.
-2. Start Arduino application and open Preferences window.
-3. Enter https://arduino.esp8266.com/stable/package_esp8266com_index.json into Additional Board Manager URLs field.
+2. Start Arduino application and open __File > Preferences__ window.
+3. Enter https://arduino.esp8266.com/stable/package_esp8266com_index.json into __Additional Board Manager URLs__ field.
 4. Open Boards Manager from __Tools > Board__ menu and search for esp8266.
-5. There will be one option by ESP8266 community. Select the latest version from the drop-down box and click install button. 
+5. There will be one option by __ESP8266 community__. Select the latest version from the drop-down box and click install button. 
 
 ## Using the code
 
-1. After downloading the repository go to the "PMS7003_OTA_update_httpserver" folder and open the main code "PMS7003_OTA_update_httpserver.ino" file.
+1. After downloading the repository go to the __"PMS7003_OTA_update_httpserver"__ folder and open the main code __"PMS7003_OTA_update_httpserver.ino"__ file.
 2. Connect the esp8266 based board to your computer via a usb cable.
 3. Choose the correct port from __Tools > Port__. In case of windows operating system you can get the port no. from Device Manager > Ports. Look for the one which mentions usb-serial.
 4. Go back to arduino IDE and select your ESP8266 board from __Tools > Board__ menu after installation.
