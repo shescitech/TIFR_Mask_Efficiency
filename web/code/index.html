@@ -329,6 +329,60 @@
 
       }
 
+      .exportModel-wr{
+        width:100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.7);
+        position: absolute;
+        top:0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .exportModel-container{
+        width:100%;
+        max-width: 600px;
+        height: 350px;
+        background-color: rgba(255, 255, 255, 1);
+        display: flex;
+        border-radius: 10px;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .exportModel{
+        width:80%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: left;
+        font-size: 1.2rem;
+      }
+      .exportText{
+        font-size: 1.2rem;
+      }
+      .i-export{
+        width: 100%;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        padding: 5px;
+        font-size: 1.2rem;
+        border-radius: 5px;
+      }
+      .export-savebtn{
+        width: 150px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: white;
+        background-color: rgba(0, 100, 255, 1);
+      }
+
     </style>
     <script src="js/axios.min.js" charset="utf-8"></script>
     <script src="js/chart.js@2.8.0"></script>
@@ -411,8 +465,8 @@
         initializeData()
         getClass('startCircle').addEventListener('click', startProcess, false);
         getClass('i-particle-dimension').addEventListener('change', changeGraph, false);
-        getClass('downloadBtn').addEventListener('click', downloadData, false);
-        getClass('downloadAllBtn').addEventListener('click', downloadAllData, false);
+        getClass('downloadBtn').addEventListener('click', prepareDownloadData, false);
+        getClass('downloadAllBtn').addEventListener('click', prepareDownloadAllData, false);
         getClass('efficiency-name').addEventListener('click', toggleEfficiency, false);
         getClass('advanced-setting-icon').addEventListener('click', toggleAdvancedSetting, false);
         getClass('data-running-icon').addEventListener('click', toggleDataRequest, false);
@@ -426,9 +480,37 @@
         getClass('data-upload-icon').addEventListener('click', loadNew, false);
         getClass('fileChooseModel').addEventListener('click', uploadFile, false);
         getClass('i-upload').addEventListener('change', processFile, false);
+        getClass('export-savebtn').addEventListener('click', promptDownload, false);
 
         addFooter();
         checkDataOperner()
+      }
+
+      function prepareDownload(){
+        getClass('exportModel-wrc').classList.toggle('d-none');
+
+      }
+
+      function prepareDownloadData(){
+        getClass('export-savebtn').setAttribute('data-export', 'one')
+        prepareDownload()
+        var currentParticleDimension=getClass('i-particle-dimension').value;
+        getClass('i-export-name').value='Filtration Data '+currentParticleDimension+' '+new Date().toDateString()+'.csv';
+      }
+      function prepareDownloadAllData(){
+        getClass('export-savebtn').setAttribute('data-export', 'all')
+        prepareDownload()
+        getClass('i-export-name').value='Filtration Data '+new Date().toDateString()+'.csv'
+      }
+      function promptDownload(){
+        var downloadtype=getClass('export-savebtn').getAttribute('data-export')
+        if(downloadtype=='one'){
+          downloadData()
+        }else{
+          downloadAllData()
+
+        }
+        getClass('exportModel-wrc').classList.toggle('d-none');
       }
 
       function checkDataOperner(){
@@ -854,7 +936,9 @@
           totalData=totalData+ ', '+indiData[currentParticleDimension][i]
           totalData=totalData+ '\n';
         }
-        downloadFile(totalData, 'Filtration Data '+currentParticleDimension+' '+new Date().toDateString()+'.csv')
+        totalData=totalData+'# Date: '+new Date().toDateString() +'\n';
+        totalData=totalData+'# '+getClass('i-export-parameters').value +'\n';
+        downloadFile(totalData, getClass('i-export-name').value)
       }
 
       function downloadAllData(){
@@ -876,7 +960,9 @@
           totalData=totalData+ ', '+indiData['Time_passed'][i]
           totalData=totalData+ '\n';
         }
-        downloadFile(totalData, 'Filtration Data '+new Date().toDateString()+'.csv')
+        totalData=totalData+'# Date: '+new Date().toDateString() +'\n';
+        totalData=totalData+'# '+getClass('i-export-parameters').value +'\n';
+        downloadFile(totalData, getClass('i-export-name').value)
       }
 
       function stopData(){
@@ -1223,5 +1309,27 @@
         </div>
       </div>
     </div>
+    <!-- This is to show the optional parameters to be added to exported file -->
+    <div class="exportModel-wrc d-none">
+      <div class="exportModel-wr">
+        <div class="exportModel-container">
+          <div class="exportModel">
+            <div class="export-name exportText">
+              File name:
+            </div>
+            <input class="i-export-name i-export" type="text">
+            <div class="export-parameters exportText">
+              Optional parameters:
+            </div>
+            <input class="i-export-parameters i-export" type="text">
+            <div class="export-savebtn">
+              Save
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>
