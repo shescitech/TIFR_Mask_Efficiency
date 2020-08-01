@@ -383,6 +383,33 @@
         background-color: rgba(0, 100, 255, 1);
       }
 
+      /* Tooltip part */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: rgba(0,0,0,0.5);
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 6px 3px;
+
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+        top: 100%;
+        left: 50%;
+        margin-left: -60px;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+      }
+
     </style>
     <script src="js/axios.min.js" charset="utf-8"></script>
     <script src="js/chart.js@2.8.0"></script>
@@ -695,8 +722,18 @@
         var scales={
           xAxes: [{
             type: 'linear',
+            scaleLabel: {
+              display: true,
+              labelString: 'Time (s)'
+            },
             ticks: {
               beginAtZero: false,
+            }
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Particle counts'
             }
           }]
       }
@@ -1098,13 +1135,16 @@
                   <option value="PM10_CF">10 &mu;m concentration (&mu;g/m^3) CF=1</option>
                 </select>
 
-                <div class="advanced-setting-icon">
+                <div class="advanced-setting-icon tooltip">
+                  <span class="tooltiptext">Advanced Setting</span>
                   <i style="font-size:24px" class="fa fa-wrench"></i>
                 </div>
-                <div class="data-running-icon" data-status='on'>
+                <div class="data-running-icon tooltip" data-status='on'>
+                  <span class="tooltiptext">Start/stop data</span>
                   <i style="font-size:24px" class="fa fa-spin  data-status-icon">&#xf013;</i>
                 </div>
-                <div class="data-upload-icon" data-status='on'>
+                <div class="data-upload-icon tooltip" data-status='on'>
+                  <span class="tooltiptext">Upload data</span>
                   <i style="font-size:24px" class="fa fa-upload" aria-hidden="true"></i>
                 </div>
               </div>
