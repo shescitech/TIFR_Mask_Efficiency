@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 datas=[] 
 nop=5 #number of points for averaging/Filtering
 start_time=time.time() #starting system time
-TCP_IP = '192.168.0.185' #change your ip value
-TCP_PORT = 23 #change your port value
+TCP_IP = '192.168.0.185' #change your ip address
+TCP_PORT = 23 
 BUFFER_SIZE = 1024
 
 
