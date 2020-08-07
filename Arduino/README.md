@@ -1,6 +1,6 @@
 # Usage Instructions 
 
-This folder consists of arduino code to integrate Plantower air quality sensor PMS7003 with any ESP8266 based board (Wemos D1 R2, Wemos D1 mini, Nodemcu etc) and stream the particle count data to local http web server as well as to local telent server.
+This folder consists of arduino code to integrate Plantower air quality sensor PMS7003 with any ESP8266 based board (Wemos D1 R2, Wemos D1 mini, Nodemcu etc) and stream the particle count data to local http web server as well as to local telnet server.
 
 
 ## Installation
