@@ -1,6 +1,6 @@
 # Open source design for mask efficiency testing
 
-The project consists of all the code, design documents, and instructions to make a low-cost, face mask particulate filtration efficiency tester developed at TIFR. For starters, please read the PDF file [TIFR_Mask_Tester_07Aug20.pdf](TIFR_Mask_Tester_07Aug20.pdf), this contains an overview of the project.
+The project consists of all the code, design documents, and instructions to make a low-cost, face mask particulate filtration efficiency tester developed at TIFR. For starters, please read the PDF file [TIFR_Mask_Tester_08Aug20.pdf](TIFR_Mask_Tester_08Aug20.pdf), this contains an overview of the project.
 
 ## Publication
 
